@@ -93,10 +93,10 @@ static ssize_t getpinfo_call(struct file *file, const char __user *buf,
 	*/
 
 	cur_pid = task_pid_nr(current);
-	parent= current->parent->pid;
-	state=  current->state;
-	flags= current->flags;
-	priority= current->prio;
+	if(current->parent !=NULL && current->parent->pid !=NULL) parent = current->parent->pid;
+	if(current->state !=NULL) state = current->state;
+	if(current->flags !=NULL) flags= current->flags;
+	if(current->prio !=NULL) priority= current->prio;
 
 	sprintf(resp_line, "     Current PID %d\n", cur_pid);
 	strcat(respbuf, resp_line);
