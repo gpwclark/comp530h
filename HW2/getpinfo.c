@@ -7,7 +7,9 @@
 #include <linux/sched.h>
 #include <linux/fs_struct.h>
 #include <linux/mm_types.h>
-
+#include <linux/rwsem.h>
+#include <linux/list.h>
+#include <linux/rcupdate.h>
 #include "getpinfo.h" /* used by both kernel module and user program */
 
 /* The following two variables are global state shared between
@@ -46,7 +48,8 @@ static ssize_t getpinfo_call(struct file *file, const char __user *buf,
 	int priority = 0;
 	char* f_name;
 	char * d_name;
-	struct task_struct *task_pointer;
+	struct task_struct *task_pointer = NULL;
+	struct list_head *list = NULL;
 
 	/* the user's write() call should not include a count that exceeds
 	 * the size of the module's buffer for the call string.
@@ -100,40 +103,64 @@ static ssize_t getpinfo_call(struct file *file, const char __user *buf,
 	f_name = kmalloc( (sizeof(char) * MAX_FN) , GFP_ATOMIC); 
 	d_name = kmalloc( (sizeof(char) * MAX_DL) , GFP_ATOMIC);
 
-	task_pointer = current;
-	cur_pid = pid_vnr(get_task_pid(current,PIDTYPE_PID));
-	parent = current->parent->pid;
-	state = current->state;
-	flags= current->flags;
-	priority= current->prio;
-	get_task_comm(f_name, current);
-	d_name = d_path(&(current->fs->pwd), d_name, MAX_DL);
+	rcu_read_lock();
+	list_for_each(list, &call_task->sibling){
+		task_pointer = list_entry(list, struct task_struct, sibling);
+		cur_pid = pid_vnr(get_task_pid(task_pointer,PIDTYPE_PID));
+		parent = task_pointer->parent->pid;
+		state = task_pointer->state;
+		flags= task_pointer->flags;
+		priority= task_pointer->prio;
+		get_task_comm(f_name, task_pointer);
+		d_name = d_path(&(task_pointer->fs->pwd), d_name, MAX_DL);
 
-	sprintf(resp_line, "     Current PID %d\n", cur_pid);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  parent %d\n", parent);	
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  state %ld\n", state);	
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  flags %08lx\n", flags);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  priority %d\n", priority);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  filename %s\n", f_name);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  cwd %s\n", d_name);
-	strcat(respbuf, resp_line);	
-	sprintf(resp_line, "	  number of vma's %ld\n", task_pointer->mm->map_count);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  total VM %ld\n", task_pointer->mm->total_vm);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  shared VM %ld\n", task_pointer->mm->shared_vm);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  executable VM %ld\n", task_pointer->mm->exec_vm);
-	strcat(respbuf, resp_line);
-	sprintf(resp_line, "	  stack VM %ld\n", task_pointer->mm->stack_vm);
-	strcat(respbuf, resp_line);
+		sprintf(resp_line, "     Current PID %d\n", cur_pid);
+		strcat(respbuf, resp_line);
 
+		sprintf(resp_line, "	  parent %d\n", parent);	
+		strcat(respbuf, resp_line);
+
+		sprintf(resp_line, "	  state %ld\n", state);	
+		strcat(respbuf, resp_line);
+
+		sprintf(resp_line, "	  flags %08lx\n", flags);
+		strcat(respbuf, resp_line);
+
+		sprintf(resp_line, "	  priority %d\n", priority);
+		strcat(respbuf, resp_line);
+
+		sprintf(resp_line, "	  filename %s\n", f_name);
+		strcat(respbuf, resp_line);
+
+		sprintf(resp_line, "	  cwd %s\n", d_name);
+		strcat(respbuf, resp_line);	
+
+		down_read(&(task_pointer->mm->mmap_sem));
+		sprintf(resp_line, "	  number of vma's %d\n", task_pointer->mm->map_count);
+		up_read(&(task_pointer->mm->mmap_sem));
+		strcat(respbuf, resp_line);
+
+		down_read(&(task_pointer->mm->mmap_sem));
+		sprintf(resp_line, "	  total VM %ld\n", task_pointer->mm->total_vm);
+		up_read(&(task_pointer->mm->mmap_sem));
+		strcat(respbuf, resp_line);
+
+		down_read(&(task_pointer->mm->mmap_sem));
+		sprintf(resp_line, "	  shared VM %ld\n", task_pointer->mm->shared_vm);
+		up_read(&(task_pointer->mm->mmap_sem));
+		strcat(respbuf, resp_line);
+
+		down_read(&(task_pointer->mm->mmap_sem));
+		sprintf(resp_line, "	  executable VM %ld\n", task_pointer->mm->exec_vm);
+		up_read(&(task_pointer->mm->mmap_sem));
+		strcat(respbuf, resp_line);
+
+		down_read(&(task_pointer->mm->mmap_sem));
+		sprintf(resp_line, "	  stack VM %ld\n", task_pointer->mm->stack_vm);
+		up_read(&(task_pointer->mm->mmap_sem));
+		strcat(respbuf, resp_line);
+	}
+	rcu_read_unlock();
 	kfree(f_name);
 	kfree(d_name);
 	/* Here the response has been generated and is ready for the user
