@@ -100,11 +100,19 @@ static ssize_t getpinfo_call(struct file *file, const char __user *buf,
 	/* Use kernel functions for access to pid for a process 
 	*/
 	//allocate memory for some string buffers
-	f_name = kmalloc( (sizeof(char) * MAX_FN) , GFP_ATOMIC); 
-	d_name = kmalloc( (sizeof(char) * MAX_DL) , GFP_ATOMIC);
-
+	f_name = kmalloc( (sizeof(char) * MAX_FN) , GFP_KERNEL); 
+	if (f_name == NULL) {
+		preempt_enable(); 
+		return -ENOSPC;
+	}
+	d_name = kmalloc( (sizeof(char) * MAX_DL) , GFP_KERNEL);
+	if (d_name == NULL) {
+		preempt_enable(); 
+		return -ENOSPC;
+	}
+	
 	rcu_read_lock();
-	list_for_each(list, &call_task->sibling){
+	list_for_each_prev(list, &current->real_parent->children){
 		task_pointer = list_entry(list, struct task_struct, sibling);
 		cur_pid = pid_vnr(get_task_pid(task_pointer,PIDTYPE_PID));
 		parent = task_pointer->parent->pid;

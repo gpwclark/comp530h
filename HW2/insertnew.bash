@@ -8,5 +8,6 @@ echo "$BEFORE remove the old module "
 sudo rmmod getpinfo
 echo "$BEFORE insert the new module "
 sudo insmod getpinfo.ko
-echo "$BEFORE execute the caller program"
-./caller
+echo "$BEFORE execute the dummy programs"
+sleep 1
+./dummy & ./dummy & ./dummy &
