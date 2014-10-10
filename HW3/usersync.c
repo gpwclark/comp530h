@@ -31,7 +31,7 @@ struct dentry *dir, *file;
 
 wait_queue_head_t q[MAX_QUEUES];//array of wait queues for all the events
 int qindex = 0; //index of next empty spot for a wait queue head
-
+char qnames[MAX_QUEUES][MAX_NAME];
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
@@ -43,7 +43,6 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	int rc;
 	char callbuf[MAX_CALL];
 	char * calltemp;
-	DEFINE_WAIT(wait);
 	/* the user's write() call should not include a count that exceeds
 	 * the size of the module's buffer for the call string.
 	 */
@@ -89,12 +88,14 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	printk(KERN_DEBUG "usersync: call %s calltemp %s", callbuf, calltemp);
 		
 	//handle the different calls
-	if (strcmp(callbuf, "event_create") ) {
+	if (strcmp(callbuf, "event_create") ==0) {
 		//only param is name
 		//make the wait queue for the event
 		init_waitqueue_head(&(q[qindex]));
-		printk(KERN_DEBUG "usersync: call %s returns %d", callbuf, qindex);		
+		strcat(qnames[qindex], calltemp);
+		printk(KERN_DEBUG "usersync: call %s temp= %s returns %d", callbuf, calltemp, qindex);		
 		sprintf(respbuf, "%d\n", qindex);
+		qindex++;
 	}
 	else if (strcmp(callbuf, "event_id") ) {
 	}

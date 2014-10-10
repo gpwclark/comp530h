@@ -3,5 +3,6 @@
 #define MAX_RESP 200
 #define MAX_ARG 25
 #define MAX_QUEUES 100
+#define MAX_NAME 25
 char dir_name[] = "usersync";
 char file_name[] = "call";
