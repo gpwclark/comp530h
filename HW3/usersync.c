@@ -195,7 +195,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 			//make the ps wait
 			DEFINE_WAIT(wait);
 			add_wait_queue(&(q[myid]), &wait);	
-			while(1){
+			while(call_task==NULL){
 				if(task_exclusive){
 					printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
 					prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
@@ -205,11 +205,12 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 					printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
 				}
 				preempt_enable();
+				printk(KERN_DEBUG "usersync: wait is preparing to schedule");
 				schedule();
 				preempt_disable();
-				if(call_task == current) break;
+				printk(KERN_DEBUG "usersync: wait is about to finish waiting");
+				//call_task=current;//unessesary?
 			}
-			call_task=current;//unessesary?
 			finish_wait(&(q[myid]), &wait);
 			sprintf(respbuf, "%d\n", myid);//print out the id
 		}
