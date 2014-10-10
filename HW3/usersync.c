@@ -34,6 +34,7 @@ struct dentry *dir, *file;
 wait_queue_head_t q[MAX_QUEUES];//array of wait queues for all the events
 int qindex = 0; //index of next empty spot for a wait queue head
 char qnames[MAX_QUEUES][MAX_NAME];
+int shouldWAIT, waitP[2];
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
@@ -90,7 +91,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	printk(KERN_DEBUG "usersync: call %s calltemp %s", callbuf, calltemp);
 		
 	//handle the different calls
-	if (strcmp(callbuf, "event_create") ==0) {
+	if (strcmp(callbuf, "event_create") ==0 && qindex < MAX_QUEUES) {
 		//only param is name
 		//make the wait queue for the event
 		init_waitqueue_head(&(q[qindex]));
@@ -107,6 +108,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		for(i =0; i< qindex; i++){
 			if(strcmp(qnames[i], calltemp) == 0){//we have a matching name
 				sprintf(respbuf, "%d\n", i);//return the value of i
+				break;
 			}
 			else{
 				sprintf(respbuf, "%d\n", -1); //not found error
@@ -119,34 +121,21 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		calltemp[0] = '\0';
 		calltemp++;// we want the pointer after the space
 		printk(KERN_DEBUG "usersync: call %s firstP= %s secondP %s", callbuf, firstP, calltemp);		
+
 		int myid, rcode1, rcode2, task_exclusive;
 		rcode1 = kstrtoint(firstP, 10, &myid);
 		rcode2 = kstrtoint(calltemp, 10, &task_exclusive);
-		if(rcode1 == 0 && rcode2 == 0 &&  myid <= qindex){//we have a number and myid is real
-			//make the ps wait
-			//TODO exclusive v inclusive signal set
-			DEFINE_WAIT(wait);
-			add_wait_queue(&(q[myid]), &wait);	
-			if(task_exclusive){
-				printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
-				prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
-			}
-			else{
-				prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
-				printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
-			}
-			schedule();
-			finish_wait(&(q[myid]), &wait);
-			sprintf(respbuf, "%d\n", myid);//print out the id
+		if(rcode1 == 0 && rcode2 == 0 &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
+			shouldWAIT = 1;
+			waitP[0] = myid;
+			waitP[1] = task_exclusive;
 		}
-		else{
-			sprintf(respbuf, "%d\n", -1); //not found error
-		}
+			
 	}
 	else if (strcmp(callbuf, "event_signal") == 0) {	
 		int myid, rcode1;
 		rcode1 = kstrtoint(calltemp, 10, &myid);
-		if(rcode1 == 0  &&  myid <= qindex){//we have a number and myid is real
+		if(rcode1 == 0  &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
 			wake_up(&(q[myid])); //wake up all normal + (x<=1) exlusive waiter
 			sprintf(respbuf, "%d\n", 0); //Success
 		}
@@ -157,7 +146,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	else if (strcmp(callbuf, "event_destroy") == 0 ) {
 		int myid, rcode1;
 		rcode1 = kstrtoint(calltemp, 10, &myid);
-		if(rcode1 == 0  &&  myid <= qindex){//we have a number and myid is real
+		if(rcode1 == 0  &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
 			wake_up_all(&(q[myid])); //wake up all normal + (x<=1) exlusive waiter
 			sprintf(respbuf, "%d\n", 0); //Success
 		}
@@ -172,12 +161,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		return count;  /* write() calls return the number of bytes written */
 	}
 
-	/* Here the response has been generated and is ready for the user
-	 * program to access it by a read() call.
-	 */
 
-
-	//printk(KERN_DEBUG "usersync: call %s will return %s", callbuf, respbuf);
 	preempt_enable();
 
 	*ppos = 0;  /* reset the offset to zero */
@@ -200,6 +184,32 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 		return 0;
 	}
 
+	if ( shouldWAIT == 1 ) {
+		shouldWAIT = 0; //reset wait flag
+		int myid, task_exclusive;
+		myid = waitP[0];
+		task_exclusive = waitP[1];
+		waitP[0] = -1; waitP[1] = -1;//reset params
+		if(myid <= qindex){//we have a number and myid is real
+			sprintf(respbuf, "%d\n", myid);//print out the id
+			//make the ps wait
+			DEFINE_WAIT(wait);
+			add_wait_queue(&(q[myid]), &wait);	
+			if(task_exclusive){
+				printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
+				prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+			}
+			else{
+				prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+				printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
+			}
+			schedule();
+			finish_wait(&(q[myid]), &wait);
+		}
+		else{
+			sprintf(respbuf, "%d\n", -1); //not found error
+		}
+	}
 	rc = strlen(respbuf) + 1; /* length includes string termination */
 
 	/* return at most the user specified length with a string 
