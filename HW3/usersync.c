@@ -191,20 +191,27 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 		task_exclusive = waitP[1];
 		waitP[0] = -1; waitP[1] = -1;//reset params
 		if(myid <= qindex){//we have a number and myid is real
-			sprintf(respbuf, "%d\n", myid);//print out the id
+			call_task = NULL;
 			//make the ps wait
 			DEFINE_WAIT(wait);
 			add_wait_queue(&(q[myid]), &wait);	
-			if(task_exclusive){
-				printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
-				prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+			while(1){
+				if(task_exclusive){
+					printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
+					prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+				}
+				else{
+					prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+					printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
+				}
+				preempt_enable();
+				schedule();
+				preempt_disable();
+				if(call_task == current) break;
 			}
-			else{
-				prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
-				printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
-			}
-			schedule();
+			call_task=current;//unessesary?
 			finish_wait(&(q[myid]), &wait);
+			sprintf(respbuf, "%d\n", myid);//print out the id
 		}
 		else{
 			sprintf(respbuf, "%d\n", -1); //not found error

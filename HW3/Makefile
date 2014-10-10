@@ -1,5 +1,5 @@
 obj-m += usersync.o
-
+EXTRA_CFLAGS=-std=gnu99
 K=$(shell uname -r)
 M=$(PWD)
 
