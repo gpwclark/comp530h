@@ -10,6 +10,8 @@
 #include <linux/rwsem.h>
 #include <linux/list.h>
 #include <linux/rcupdate.h>
+#include <linux/wait.h>
+#include <linux/preempt.h>
 #include "usersync.h" /* used by both kernel module and user program */
 
 /* The following two variables are global state shared between
@@ -55,16 +57,16 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	 * global state.
 	 */
 
-	//preempt_disable();
+	preempt_disable();
 
 	if (call_task != NULL) {
-		//preempt_enable(); 
+		preempt_enable(); 
 		return -EAGAIN;
 	}
 
 	respbuf = kmalloc(MAX_RESP, GFP_ATOMIC);
 	if (respbuf == NULL) {
-		//preempt_enable(); 
+		preempt_enable(); 
 		return -ENOSPC;
 	}
 	strcpy(respbuf,""); /* initialize buffer with null string */
@@ -112,21 +114,61 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		}
 	}
 	else if ( strcmp(callbuf, "event_wait") == 0 ) {
-		char **firstP = &calltemp;
-		calltemp = strchr(callbuf,' ');
+		char *firstP = calltemp;
+		calltemp = strchr(calltemp,' ');
 		calltemp[0] = '\0';
 		calltemp++;// we want the pointer after the space
-		printk(KERN_DEBUG "usersync: call %s firstP= %s secondP %s", callbuf, *firstP, calltemp);		
-		sprintf(respbuf, "%d\n", 1);
+		printk(KERN_DEBUG "usersync: call %s firstP= %s secondP %s", callbuf, firstP, calltemp);		
+		int myid, rcode1, rcode2, task_exclusive;
+		rcode1 = kstrtoint(firstP, 10, &myid);
+		rcode2 = kstrtoint(calltemp, 10, &task_exclusive);
+		if(rcode1 == 0 && rcode2 == 0 &&  myid <= qindex){//we have a number and myid is real
+			//make the ps wait
+			//TODO exclusive v inclusive signal set
+			DEFINE_WAIT(wait);
+			add_wait_queue(&(q[myid]), &wait);	
+			if(task_exclusive){
+				printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
+				prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+			}
+			else{
+				prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+				printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
+			}
+			schedule();
+			finish_wait(&(q[myid]), &wait);
+			sprintf(respbuf, "%d\n", myid);//print out the id
+		}
+		else{
+			sprintf(respbuf, "%d\n", -1); //not found error
+		}
 	}
-	else if (strcmp(callbuf, "event_signal") == 0) {
+	else if (strcmp(callbuf, "event_signal") == 0) {	
+		int myid, rcode1;
+		rcode1 = kstrtoint(calltemp, 10, &myid);
+		if(rcode1 == 0  &&  myid <= qindex){//we have a number and myid is real
+			wake_up(&(q[myid])); //wake up all normal + (x<=1) exlusive waiter
+			sprintf(respbuf, "%d\n", 0); //Success
+		}
+		else{
+			sprintf(respbuf, "%d\n", -1); //not found error
+		}
 	}
 	else if (strcmp(callbuf, "event_destroy") == 0 ) {
+		int myid, rcode1;
+		rcode1 = kstrtoint(calltemp, 10, &myid);
+		if(rcode1 == 0  &&  myid <= qindex){//we have a number and myid is real
+			wake_up_all(&(q[myid])); //wake up all normal + (x<=1) exlusive waiter
+			sprintf(respbuf, "%d\n", 0); //Success
+		}
+		else{
+			sprintf(respbuf, "%d\n", -1); //not found error
+		}
 	}
 	else{
 		strcpy(respbuf, "Failed: invalid operation\n");
 		printk(KERN_DEBUG "usersync: call %s will return %s\n", callbuf, respbuf);
-		//preempt_enable();
+		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
 
@@ -136,7 +178,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 
 
 	//printk(KERN_DEBUG "usersync: call %s will return %s", callbuf, respbuf);
-	//preempt_enable();
+	preempt_enable();
 
 	*ppos = 0;  /* reset the offset to zero */
 	return count;  /* write() calls return the number of bytes written */
@@ -151,10 +193,10 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 {
 	int rc; 
 
-	//preempt_disable();
+	preempt_disable();
 
 	if (current != call_task) {
-		//preempt_enable();
+		preempt_enable();
 		return 0;
 	}
 
@@ -177,7 +219,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 	respbuf = NULL;
 	call_task = NULL;
 
-	//preempt_enable();
+	preempt_enable();
 
 	*ppos = 0;  /* reset the offset to zero */
 	return rc;  /* read() calls return the number of bytes read */

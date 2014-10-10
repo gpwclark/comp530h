@@ -42,7 +42,7 @@ void main (int argc, char* argv[])
 	for(j=1; j < argc; j++){
 		strcat(argS, argv[j]);
 	}
-	do_syscall("event_wait 1 0");
+	do_syscall("event_signal 1");
 	fprintf(stdout, "Module usersync returns %s", resp_buf);
 
 	close (fp);
