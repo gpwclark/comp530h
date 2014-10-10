@@ -55,16 +55,16 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	 * global state.
 	 */
 
-	preempt_disable();
+	//preempt_disable();
 
 	if (call_task != NULL) {
-		preempt_enable(); 
+		//preempt_enable(); 
 		return -EAGAIN;
 	}
 
 	respbuf = kmalloc(MAX_RESP, GFP_ATOMIC);
 	if (respbuf == NULL) {
-		preempt_enable(); 
+		//preempt_enable(); 
 		return -ENOSPC;
 	}
 	strcpy(respbuf,""); /* initialize buffer with null string */
@@ -97,18 +97,36 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		sprintf(respbuf, "%d\n", qindex);
 		qindex++;
 	}
-	else if (strcmp(callbuf, "event_id") ) {
+	/*
+	 * Note that the behavior of event_id will not protect against duplicate names. You are allowed to duplicate name events, but it is ill advised and not supported
+	 */ 
+	else if (strcmp(callbuf, "event_id") ==0) {
+		int i = 0;
+		for(i =0; i< qindex; i++){
+			if(strcmp(qnames[i], calltemp) == 0){//we have a matching name
+				sprintf(respbuf, "%d\n", i);//return the value of i
+			}
+			else{
+				sprintf(respbuf, "%d\n", -1); //not found error
+			}
+		}
 	}
-	else if (strcmp(callbuf, "event_wait") ) {
+	else if ( strcmp(callbuf, "event_wait") == 0 ) {
+		char **firstP = &calltemp;
+		calltemp = strchr(callbuf,' ');
+		calltemp[0] = '\0';
+		calltemp++;// we want the pointer after the space
+		printk(KERN_DEBUG "usersync: call %s firstP= %s secondP %s", callbuf, *firstP, calltemp);		
+		sprintf(respbuf, "%d\n", 1);
 	}
-	else if (strcmp(callbuf, "event_signal") ) {
+	else if (strcmp(callbuf, "event_signal") == 0) {
 	}
-	else if (strcmp(callbuf, "event_destroy") ) {
+	else if (strcmp(callbuf, "event_destroy") == 0 ) {
 	}
 	else{
 		strcpy(respbuf, "Failed: invalid operation\n");
 		printk(KERN_DEBUG "usersync: call %s will return %s\n", callbuf, respbuf);
-		preempt_enable();
+		//preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
 
@@ -118,7 +136,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 
 
 	//printk(KERN_DEBUG "usersync: call %s will return %s", callbuf, respbuf);
-	preempt_enable();
+	//preempt_enable();
 
 	*ppos = 0;  /* reset the offset to zero */
 	return count;  /* write() calls return the number of bytes written */
@@ -133,10 +151,10 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 {
 	int rc; 
 
-	preempt_disable();
+	//preempt_disable();
 
 	if (current != call_task) {
-		preempt_enable();
+		//preempt_enable();
 		return 0;
 	}
 
@@ -159,7 +177,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 	respbuf = NULL;
 	call_task = NULL;
 
-	preempt_enable();
+	//preempt_enable();
 
 	*ppos = 0;  /* reset the offset to zero */
 	return rc;  /* read() calls return the number of bytes read */
