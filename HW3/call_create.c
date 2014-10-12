@@ -35,15 +35,19 @@ void main (int argc, char* argv[])
 		exit (-1);
 	}
 
-	//int my_pid = getpid();
+	int my_pid = getpid();
 	//fprintf(stdout, "System call getpid() returns %d\n", my_pid);
 	int j;
 	char argS[MAX_CALL];
 	for(j=1; j < argc; j++){
 		strcat(argS, argv[j]);
+		strcat(argS, " ");
 	}
-	do_syscall("event_create one");
-	fprintf(stdout, "Module usersync returns %s", resp_buf);
+	//printf("%s\n", argS);
+	fprintf(stdout, "Process %d about to call usersync with: %s\n",my_pid, argS);
+	do_syscall(argS);
+	fprintf(stdout, "Process %d returns from call to usersync with: %s\n",my_pid, argS);
+	fprintf(stdout, "Module usersync returns %s to PID %d\n", resp_buf, my_pid);
 
 	close (fp);
 } /* end main() */
