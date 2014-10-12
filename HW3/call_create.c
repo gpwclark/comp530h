@@ -39,12 +39,30 @@ void main (int argc, char* argv[])
 	//fprintf(stdout, "System call getpid() returns %d\n", my_pid);
 	int j;
 	char argS[MAX_CALL];
-	for(j=1; j < argc; j++){
-		strcat(argS, argv[j]);
-		strcat(argS, " ");
+
+	if(atoi(argv[1]) == 0){
+		strcpy(argS, "event_create myev");
 	}
-	//printf("%s\n", argS);
+	else if(atoi(argv[1]) == 1){
+		strcpy(argS,"event_create myev2");
+	} 
+	else if(atoi(argv[1]) == 2){
+		strcpy(argS, "event_id myev2");
+	} 
+	else if(atoi(argv[1]) == 3){
+		strcpy(argS,"event_wait 1 0");
+	} 
+	else if(atoi(argv[1]) == 4){
+		strcpy(argS,"event_wait 1 1");
+	} 
+	else if(atoi(argv[1]) == 5){
+		strcpy(argS,"event_signal 1");
+	} 
+	else if(atoi(argv[1]) == 6){
+		strcpy(argS,"event_destroy 1");
+	} 
 	fprintf(stdout, "Process %d about to call usersync with: %s\n",my_pid, argS);
+	//do_syscall("event_create one");
 	do_syscall(argS);
 	fprintf(stdout, "Process %d returns from call to usersync with: %s\n",my_pid, argS);
 	fprintf(stdout, "Module usersync returns %s to PID %d\n", resp_buf, my_pid);

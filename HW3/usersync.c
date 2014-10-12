@@ -88,10 +88,10 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	calltemp[0] = '\0';
 	calltemp++;// we want the pointer after the space
 	//calltemp is the string of params
-	printk(KERN_DEBUG "usersync: call %s calltemp %s", callbuf, calltemp);
+	printk(KERN_DEBUG "usersync: call |%s| calltemp %s", callbuf, calltemp);
 		
 	//handle the different calls
-	if (strcmp(callbuf, "event_create") ==0 && qindex < MAX_QUEUES) {
+	if (strncmp(callbuf, "event_create", 12) ==0){ //&& qindex < MAX_QUEUES) {
 		//only param is name
 		//make the wait queue for the event
 		init_waitqueue_head(&(q[qindex]));
@@ -103,7 +103,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	/*
 	 * Note that the behavior of event_id will not protect against duplicate names. You are allowed to duplicate name events, but it is ill advised and not supported
 	 */ 
-	else if (strcmp(callbuf, "event_id") ==0) {
+	else if (strncmp(callbuf, "event_id", 8) ==0) {
 		int i = 0;
 		for(i =0; i< qindex; i++){
 			if(strcmp(qnames[i], calltemp) == 0){//we have a matching name
@@ -115,7 +115,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 			}
 		}
 	}
-	else if ( strcmp(callbuf, "event_wait") == 0 ) {
+	else if ( strncmp(callbuf, "event_wait", 10) == 0 ) {
 		char *firstP = calltemp;
 		calltemp = strchr(calltemp,' ');
 		calltemp[0] = '\0';
@@ -132,7 +132,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		}
 			
 	}
-	else if (strcmp(callbuf, "event_signal") == 0) {	
+	else if (strncmp(callbuf, "event_signal", 12) == 0) {	
 		int myid, rcode1;
 		rcode1 = kstrtoint(calltemp, 10, &myid);
 		if(rcode1 == 0  &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
@@ -143,7 +143,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 			sprintf(respbuf, "%d\n", -1); //not found error
 		}
 	}
-	else if (strcmp(callbuf, "event_destroy") == 0 ) {
+	else if (strncmp(callbuf, "event_destroy", 13) == 0 ) {
 		int myid, rcode1;
 		rcode1 = kstrtoint(calltemp, 10, &myid);
 		if(rcode1 == 0  &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
