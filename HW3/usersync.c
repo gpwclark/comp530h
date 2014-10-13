@@ -14,6 +14,12 @@
 #include <linux/preempt.h>
 #include "usersync.h" /* used by both kernel module and user program */
 
+
+typedef struct __respbuf_q_element {
+	struct task_struct *call_task;
+	char respbuf[MAX_RESP];
+	int lock;
+} respbuf_q_element;
 /* The following two variables are global state shared between
  * the "call" and "return" functions.  They need to be protected
  * from re-entry caused by kernel preemption.
@@ -26,7 +32,9 @@
  */
 
 struct task_struct *call_task = NULL;
-char *respbuf;
+//OBSOLETE//char *respbuf;
+respbuf_q_element respbufQ[MAX_RESP_QUEUE];
+int rindex = 0;
 
 int file_value;
 struct dentry *dir, *file;
@@ -45,6 +53,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	int rc;
 	char callbuf[MAX_CALL];
 	char * calltemp;
+	respbuf_q_element *myrespbuf;
 	/* the user's write() call should not include a count that exceeds
 	 * the size of the module's buffer for the call string.
 	 */
@@ -64,12 +73,28 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		return -EAGAIN;
 	}
 
-	respbuf = kmalloc(MAX_RESP, GFP_ATOMIC);
-	if (respbuf == NULL) {
-		preempt_enable(); 
-		return -ENOSPC;
+	if(rindex < MAX_RESP_QUEUE){
+		myrespbuf = &respbufQ[rindex];
+		myrespbuf->lock = 1;
+		myrespbuf->call_task = current;
+		rindex++;
 	}
-	strcpy(respbuf,""); /* initialize buffer with null string */
+	else if(respbufQ[0].lock == 0){//loop around
+		myrespbuf = &respbufQ[0];
+		myrespbuf->lock = 1;
+		myrespbuf->call_task = current;
+		rindex = 1;
+	}
+	else{
+		preempt_enable(); 
+		return -1;
+	}
+
+	//if (myrespbuf->respbuf == NULL) {
+	//	preempt_enable(); 
+	//	return -ENOSPC;
+	//}
+	strcpy(myrespbuf->respbuf,""); /* initialize buffer with null string */
 
 	/* current is global for the kernel and contains a pointer to the
 	 * running process
@@ -95,8 +120,8 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		//make the wait queue for the event
 		init_waitqueue_head(&(q[qindex]));
 		strcat(qnames[qindex], calltemp);
-		printk(KERN_DEBUG "usersync: call %s temp= %s returns %d", callbuf, calltemp, qindex);		
-		sprintf(respbuf, "%d\n", qindex);
+		printk(KERN_DEBUG "usersync: call %s temp= %s returns %i", callbuf, calltemp, qindex);		
+		sprintf(myrespbuf->respbuf, "%i", qindex);
 		qindex++;
 	}
 	/*
@@ -106,11 +131,11 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		int i = 0;
 		for(i =0; i< qindex; i++){
 			if(strcmp(qnames[i], calltemp) == 0){//we have a matching name
-				sprintf(respbuf, "%d\n", i);//return the value of i
+				sprintf(myrespbuf->respbuf, "%i", i);//return the value of i
 				break;
 			}
 			else{
-				sprintf(respbuf, "%d\n", -1); //not found error
+				sprintf(myrespbuf->respbuf, "%i", -1); //not found error
 			}
 		}
 	}
@@ -146,11 +171,12 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 				//call_task=current;//unessesary?
 			}
 			finish_wait(&(q[myid]), &wait);
-			sprintf(respbuf, "%d\n", myid);//print out the id
+			sprintf(myrespbuf->respbuf, "%i", myid);//print out the id
 		}
 		else{
-			sprintf(respbuf, "%d\n", -1); //not found error
+			sprintf(myrespbuf->respbuf, "%i", -1); //not found error
 		}
+		printk(KERN_DEBUG "usersync: In write() for wait myrespbuf->respbuf == %s", myrespbuf->respbuf); 
 			
 	}
 	else if (strncmp(callbuf, "event_signal", 12) == 0) {	
@@ -158,10 +184,10 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		rcode1 = kstrtoint(calltemp, 10, &myid);
 		if(rcode1 == 0  &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
 			wake_up(&(q[myid])); //wake up all normal + (x<=1) exlusive waiter
-			sprintf(respbuf, "%d\n", 0); //Success
+			sprintf(myrespbuf->respbuf, "%i", 0); //Success
 		}
 		else{
-			sprintf(respbuf, "%d\n", -1); //not found error
+			sprintf(myrespbuf->respbuf, "%i", -1); //not found error
 		}
 	}
 	else if (strncmp(callbuf, "event_destroy", 13) == 0 ) {
@@ -169,15 +195,15 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		rcode1 = kstrtoint(calltemp, 10, &myid);
 		if(rcode1 == 0  &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
 			wake_up_all(&(q[myid])); //wake up all normal + (x<=1) exlusive waiter
-			sprintf(respbuf, "%d\n", 0); //Success
+			sprintf(myrespbuf->respbuf, "%i", 0); //Success
 		}
 		else{
-			sprintf(respbuf, "%d\n", -1); //not found error
+			sprintf(myrespbuf->respbuf, "%i", -1); //not found error
 		}
 	}
 	else{
-		strcpy(respbuf, "Failed: invalid operation\n");
-		printk(KERN_DEBUG "usersync: call %s will return %s\n", callbuf, respbuf);
+		strcpy(myrespbuf->respbuf, "Failed: invalid operation\n");
+		printk(KERN_DEBUG "usersync: call %s will return %s\n", callbuf, myrespbuf->respbuf);
 		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
@@ -197,31 +223,43 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 		size_t count, loff_t *ppos)
 {
 	int rc; 
-
+	respbuf_q_element *myrespbuf;
+	int i;
+	int cacheNotExist = 1;
 	preempt_disable();
 
 	if (current != call_task) {
 		preempt_enable();
 		return 0;
 	}
+	for(i = 0; i < MAX_RESP_QUEUE; i++){
+		if(current == respbufQ[i].call_task){
+			myrespbuf = &respbufQ[i];
+			cacheNotExist = 0;
+			break;
+		}
+	}
+	if (cacheNotExist) {
+		preempt_enable();
+		return -1;
+	}
 
-	rc = strlen(respbuf) + 1; /* length includes string termination */
+	rc = strlen(myrespbuf->respbuf) + 1; /* length includes string termination */
 
 	/* return at most the user specified length with a string 
 	 * termination as the last byte.  Use the kernel function to copy
 	 * from kernel space to user space.
 	 */
-
+	printk(KERN_DEBUG "usersync: In read() myrespbuf->respbuf == %s", myrespbuf->respbuf); 
 	if (count < rc) {
-		respbuf[count - 1] = '\0';
-		rc = copy_to_user(userbuf, respbuf, count);
+		myrespbuf->respbuf[count - 1] = '\0';
+		rc = copy_to_user(userbuf,myrespbuf->respbuf, count);
 	}
 	else 
-		rc = copy_to_user(userbuf, respbuf, rc);
+		rc = copy_to_user(userbuf, myrespbuf->respbuf, rc);
 
-	kfree(respbuf);
 
-	respbuf = NULL;
+	myrespbuf->lock = 0;
 	call_task = NULL;
 
 	preempt_enable();
@@ -241,8 +279,7 @@ static const struct file_operations my_fops = {
  * in user space and the kernel module.
  */
 
-static int __init usersync_module_init(void)
-{
+static int __init usersync_module_init(void){
 
 	/* create a directory to hold the file */
 
@@ -277,8 +314,6 @@ static void __exit usersync_module_exit(void)
 {
 	debugfs_remove(file);
 	debugfs_remove(dir);
-	if (respbuf != NULL)
-		kfree(respbuf);
 }
 
 /* Declarations required in building a module */
