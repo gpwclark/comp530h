@@ -34,7 +34,6 @@ struct dentry *dir, *file;
 wait_queue_head_t q[MAX_QUEUES];//array of wait queues for all the events
 int qindex = 0; //index of next empty spot for a wait queue head
 char qnames[MAX_QUEUES][MAX_NAME];
-int shouldWAIT, waitP[2];
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
@@ -126,9 +125,31 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		rcode1 = kstrtoint(firstP, 10, &myid);
 		rcode2 = kstrtoint(calltemp, 10, &task_exclusive);
 		if(rcode1 == 0 && rcode2 == 0 &&  myid <= qindex && myid < MAX_QUEUES){//we have a number and myid is real
-			shouldWAIT = 1;
-			waitP[0] = myid;
-			waitP[1] = task_exclusive;
+			call_task = NULL;
+			//make the ps wait
+			DEFINE_WAIT(wait);
+			add_wait_queue(&(q[myid]), &wait);	
+			while(call_task==NULL){
+				if(task_exclusive){
+					printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
+					prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+				}
+				else{
+					prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+					printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
+				}
+				preempt_enable();
+				printk(KERN_DEBUG "usersync: wait is preparing to schedule");
+				schedule();
+				preempt_disable();
+				printk(KERN_DEBUG "usersync: wait is about to finish waiting");
+				//call_task=current;//unessesary?
+			}
+			finish_wait(&(q[myid]), &wait);
+			sprintf(respbuf, "%d\n", myid);//print out the id
+		}
+		else{
+			sprintf(respbuf, "%d\n", -1); //not found error
 		}
 			
 	}
@@ -184,40 +205,6 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 		return 0;
 	}
 
-	if ( shouldWAIT == 1 ) {
-		shouldWAIT = 0; //reset wait flag
-		int myid, task_exclusive;
-		myid = waitP[0];
-		task_exclusive = waitP[1];
-		waitP[0] = -1; waitP[1] = -1;//reset params
-		if(myid <= qindex){//we have a number and myid is real
-			call_task = NULL;
-			//make the ps wait
-			DEFINE_WAIT(wait);
-			add_wait_queue(&(q[myid]), &wait);	
-			while(call_task==NULL){
-				if(task_exclusive){
-					printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
-					prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
-				}
-				else{
-					prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
-					printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
-				}
-				preempt_enable();
-				printk(KERN_DEBUG "usersync: wait is preparing to schedule");
-				schedule();
-				preempt_disable();
-				printk(KERN_DEBUG "usersync: wait is about to finish waiting");
-				//call_task=current;//unessesary?
-			}
-			finish_wait(&(q[myid]), &wait);
-			sprintf(respbuf, "%d\n", myid);//print out the id
-		}
-		else{
-			sprintf(respbuf, "%d\n", -1); //not found error
-		}
-	}
 	rc = strlen(respbuf) + 1; /* length includes string termination */
 
 	/* return at most the user specified length with a string 
