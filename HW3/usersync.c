@@ -115,8 +115,14 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	//printk(KERN_DEBUG "usersync: call |%s| calltemp %s", callbuf, calltemp);
 		
 	//handle the different calls
-	if (strncmp(callbuf, "event_create", 12) ==0){ //&& qindex < MAX_QUEUES) {
+	if (strncmp(callbuf, "event_create", 12) ==0 && qindex < MAX_QUEUES) {
 		//only param is name
+		int ie_c;
+		for(ie_c = 0; ie_c < qindex; ie_c++){
+			if(strcmp(qnames[qindex], calltemp) == 0){
+				return -1; //we already have that
+			}
+		}
 		//make the wait queue for the event
 		init_waitqueue_head(&(q[qindex]));
 		strcat(qnames[qindex], calltemp);
@@ -227,11 +233,6 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 	int cacheNotExist = 1;
 	preempt_disable();
 
-	if (current != call_task) {
-		printk(KERN_DEBUG "usersync: exiting on current!=call_task"); 
-		preempt_enable();
-		return 0;
-	}
 	for(i = 0; i < MAX_RESP_QUEUE; i++){
 		if(current == respbufQ[i].call_task){
 			myrespbuf = &respbufQ[i];
@@ -245,6 +246,16 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 		preempt_enable();
 		return -1;
 	}
+	while (current != call_task) {
+		preempt_enable();
+		schedule();
+		call_task = myrespbuf->call_task;
+	}
+	//if (current != call_task) {
+	//	printk(KERN_DEBUG "usersync: exiting on current!=call_task"); 
+	//	preempt_enable();
+	//	return 0;
+	//}
 
 	rc = strlen(myrespbuf->respbuf) + 1; /* length includes string termination */
 
@@ -263,7 +274,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 
 	myrespbuf->lock = 0;
 	call_task = NULL;
-
+	myrespbuf->call_task = NULL;
 	preempt_enable();
 
 	*ppos = 0;  /* reset the offset to zero */
@@ -316,7 +327,6 @@ static void __exit usersync_module_exit(void)
 {
 	debugfs_remove(file);
 	debugfs_remove(dir);
-	preempt_enable();
 }
 
 /* Declarations required in building a module */
