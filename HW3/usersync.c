@@ -229,6 +229,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 	preempt_disable();
 
 	if (current != call_task) {
+		printk(KERN_DEBUG "usersync: exiting on current!=call_task"); 
 		preempt_enable();
 		return 0;
 	}
@@ -240,6 +241,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 		}
 	}
 	if (cacheNotExist) {
+		printk(KERN_DEBUG "usersync: exiting on cacheNotExist"); 
 		preempt_enable();
 		return -1;
 	}
