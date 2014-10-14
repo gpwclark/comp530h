@@ -19,6 +19,7 @@ typedef struct __respbuf_q_element {
 	struct task_struct *call_task;
 	char respbuf[MAX_RESP];
 	int lock;
+	int index; //for testing
 } respbuf_q_element;
 /* The following two variables are global state shared between
  * the "call" and "return" functions.  They need to be protected
@@ -73,27 +74,26 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		return -EAGAIN;
 	}
 
-	if(rindex < MAX_RESP_QUEUE){
+	if(rindex < MAX_RESP_QUEUE && respbufQ[rindex].lock ==0){
 		myrespbuf = &respbufQ[rindex];
 		myrespbuf->lock = 1;
 		myrespbuf->call_task = current;
+		myrespbuf->index = rindex;
 		rindex++;
 	}
 	else if(respbufQ[0].lock == 0){//loop around
-		myrespbuf = &respbufQ[0];
+		rindex = 0;
+		myrespbuf = &respbufQ[rindex];
 		myrespbuf->lock = 1;
 		myrespbuf->call_task = current;
-		rindex = 1;
+		myrespbuf->index = rindex;
+		rindex++;
 	}
 	else{
 		preempt_enable(); 
 		return -1;
 	}
 
-	//if (myrespbuf->respbuf == NULL) {
-	//	preempt_enable(); 
-	//	return -ENOSPC;
-	//}
 	strcpy(myrespbuf->respbuf,""); /* initialize buffer with null string */
 
 	/* current is global for the kernel and contains a pointer to the
@@ -112,7 +112,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 	calltemp[0] = '\0';
 	calltemp++;// we want the pointer after the space
 	//calltemp is the string of params
-	printk(KERN_DEBUG "usersync: call |%s| calltemp %s", callbuf, calltemp);
+	//printk(KERN_DEBUG "usersync: call |%s| calltemp %s", callbuf, calltemp);
 		
 	//handle the different calls
 	if (strncmp(callbuf, "event_create", 12) ==0){ //&& qindex < MAX_QUEUES) {
@@ -120,7 +120,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		//make the wait queue for the event
 		init_waitqueue_head(&(q[qindex]));
 		strcat(qnames[qindex], calltemp);
-		printk(KERN_DEBUG "usersync: call %s temp= %s returns %i", callbuf, calltemp, qindex);		
+		//printk(KERN_DEBUG "usersync: call %s temp= %s returns %i", callbuf, calltemp, qindex);		
 		sprintf(myrespbuf->respbuf, "%i", qindex);
 		qindex++;
 	}
@@ -144,7 +144,7 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		calltemp = strchr(calltemp,' ');
 		calltemp[0] = '\0';
 		calltemp++;// we want the pointer after the space
-		printk(KERN_DEBUG "usersync: call %s firstP= %s secondP %s", callbuf, firstP, calltemp);		
+		//printk(KERN_DEBUG "usersync: call %s firstP= %s secondP %s", callbuf, firstP, calltemp);		
 
 		int myid, rcode1, rcode2, task_exclusive;
 		rcode1 = kstrtoint(firstP, 10, &myid);
@@ -154,30 +154,29 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 			//make the ps wait
 			DEFINE_WAIT(wait);
 			add_wait_queue(&(q[myid]), &wait);	
-			while(call_task==NULL){
-				if(task_exclusive){
-					printk(KERN_DEBUG "usersync: prepare to wait exclusively");		
-					prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
-				}
-				else{
-					prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
-					printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");		
-				}
-				preempt_enable();
-				printk(KERN_DEBUG "usersync: wait is preparing to schedule");
-				schedule();
-				preempt_disable();
-				printk(KERN_DEBUG "usersync: wait is about to finish waiting");
-				//call_task=current;//unessesary?
+			if(task_exclusive){
+				printk(KERN_DEBUG "usersync: prepare to wait exclusively");             
+				prepare_to_wait_exclusive(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
 			}
+			else{
+				prepare_to_wait(&(q[myid]), &wait, TASK_INTERRUPTIBLE);
+				printk(KERN_DEBUG "usersync: prepare to wait non-exclusively");         
+			}
+			preempt_enable();
+			printk(KERN_DEBUG "usersync: wait is preparing to schedule");
+			schedule();
+			preempt_disable();
+			printk(KERN_DEBUG "usersync: wait is about to finish waiting");
+			call_task=myrespbuf->call_task;
+
 			finish_wait(&(q[myid]), &wait);
 			sprintf(myrespbuf->respbuf, "%i", myid);//print out the id
 		}
 		else{
 			sprintf(myrespbuf->respbuf, "%i", -1); //not found error
 		}
-		printk(KERN_DEBUG "usersync: In write() for wait myrespbuf->respbuf == %s", myrespbuf->respbuf); 
 			
+		printk(KERN_DEBUG "usersync: myrespbuf=%p index=%i myindex->call_task=%i %p PID %i In WRITE() myrespbuf->respbuf == %s", myrespbuf, myrespbuf->index, myrespbuf->call_task->pid,&(myrespbuf->call_task->pid), current->pid, myrespbuf->respbuf);
 	}
 	else if (strncmp(callbuf, "event_signal", 12) == 0) {	
 		int myid, rcode1;
@@ -202,8 +201,8 @@ static ssize_t usersync_call(struct file *file, const char __user *buf,
 		}
 	}
 	else{
-		strcpy(myrespbuf->respbuf, "Failed: invalid operation\n");
-		printk(KERN_DEBUG "usersync: call %s will return %s\n", callbuf, myrespbuf->respbuf);
+		//printk(KERN_DEBUG "usersync: call %s will return %s\n", callbuf, myrespbuf->respbuf);
+		sprintf(myrespbuf->respbuf, "%i", -1); //not found error
 		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
@@ -237,6 +236,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 		if(current == respbufQ[i].call_task){
 			myrespbuf = &respbufQ[i];
 			cacheNotExist = 0;
+			printk(KERN_DEBUG "usersync: FOUNDRESPBUF myrespbuf=%p index=%d call_task->PID %i %p current->PID %i %p In read() myrespbuf->respbuf == %s",myrespbuf, myrespbuf->index, myrespbuf->call_task->pid, &(myrespbuf->call_task->pid), current->pid, &(current->pid), myrespbuf->respbuf);
 			break;
 		}
 	}
@@ -252,7 +252,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 	 * termination as the last byte.  Use the kernel function to copy
 	 * from kernel space to user space.
 	 */
-	printk(KERN_DEBUG "usersync: In read() myrespbuf->respbuf == %s", myrespbuf->respbuf); 
+	printk(KERN_DEBUG "usersync: myrespbuf=%p index=%d call_task->PID %i current->PID %i In read() myrespbuf->respbuf == %s",myrespbuf, myrespbuf->index, call_task->pid, current->pid, myrespbuf->respbuf);
 	if (count < rc) {
 		myrespbuf->respbuf[count - 1] = '\0';
 		rc = copy_to_user(userbuf,myrespbuf->respbuf, count);
@@ -316,6 +316,7 @@ static void __exit usersync_module_exit(void)
 {
 	debugfs_remove(file);
 	debugfs_remove(dir);
+	preempt_enable();
 }
 
 /* Declarations required in building a module */
