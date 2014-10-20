@@ -36,33 +36,20 @@ void main (int argc, char* argv[])
 	}
 
 	int my_pid = getpid();
-	//fprintf(stdout, "System call getpid() returns %d\n", my_pid);
-	int j;
 	char argS[MAX_CALL];
-
-	if(atoi(argv[1]) == 0){
-		strcpy(argS, "event_create myev");
+	i = 1;
+	while(1){
+		if(i < argc){
+			strcat(argS, argv[i]);
+		}
+		if(i < argc - 1){
+			strcat(argS, " ");
+		}
+		else{break;}
+		i++;
 	}
-	else if(atoi(argv[1]) == 1){
-		strcpy(argS,"event_create myev2");
-	} 
-	else if(atoi(argv[1]) == 2){
-		strcpy(argS, "event_id myev2");
-	} 
-	else if(atoi(argv[1]) == 3){
-		strcpy(argS,"event_wait 1 0");
-	} 
-	else if(atoi(argv[1]) == 4){
-		strcpy(argS,"event_wait 1 1");
-	} 
-	else if(atoi(argv[1]) == 5){
-		strcpy(argS,"event_signal 1");
-	} 
-	else if(atoi(argv[1]) == 6){
-		strcpy(argS,"event_destroy 1");
-	} 
-	fprintf(stdout, "Process %d about to call usersync with: %s\n",my_pid, argS);
-	//do_syscall("event_create one");
+	strcat(argS, "\0");
+	//fprintf(stdout, "Strcmp, %i", strcmp("event_create myev", argS) );
 	do_syscall(argS);
 	fprintf(stdout, "Process %d returns from call to usersync with: %s\n",my_pid, argS);
 	fprintf(stdout, "Module usersync returns %s to PID %d\n", resp_buf, my_pid);
