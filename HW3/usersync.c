@@ -249,6 +249,7 @@ static ssize_t usersync_return(struct file *file, char __user *userbuf,
 	while (current != call_task) {
 		preempt_enable();
 		schedule();
+		preempt_disable();
 		call_task = myrespbuf->call_task;
 	}
 	//if (current != call_task) {
