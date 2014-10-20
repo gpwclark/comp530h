@@ -50,8 +50,8 @@ void main (int argc, char* argv[])
 	}
 	strcat(argS, "\0");
 	//fprintf(stdout, "Strcmp, %i", strcmp("event_create myev", argS) );
+	fprintf(stdout, "Process %d calls usersync with: %s\n",my_pid, argS);
 	do_syscall(argS);
-	fprintf(stdout, "Process %d returns from call to usersync with: %s\n",my_pid, argS);
 	fprintf(stdout, "Module usersync returns %s to PID %d\n", resp_buf, my_pid);
 
 	close (fp);

@@ -35,6 +35,18 @@ echo -----
 echo
 sleep 5
 echo -----
+./call_create event_signal 0
+echo
+sleep 5
+echo -----
+./call_create event_signal 0
+echo
+sleep 5
+echo -----
+./call_create event_signal 0
+echo
+sleep 5
+echo -----
 ./call_create event_destroy 0
 echo
 sleep 5
