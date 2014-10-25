@@ -36,7 +36,7 @@ void main (int argc, char* argv[])
 	}
 
 	int my_pid = getpid();
-	char argS[MAX_CALL];
+	char* argS = malloc(sizeof(char) * MAX_CALL);
 	i = 1;
 	while(1){
 		if(i < argc){
@@ -55,6 +55,7 @@ void main (int argc, char* argv[])
 	fprintf(stdout, "Module usersync returns %s to PID %d\n", resp_buf, my_pid);
 
 	close (fp);
+	free(argS);
 } /* end main() */
 
 void do_syscall(char *call_string)
