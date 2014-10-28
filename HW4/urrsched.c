@@ -57,7 +57,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
 
 	if (strncmp(callbuf, URRSCHED_CALL, sizeof(URRSCHED_CALL) ) != 0) {//If we have the wrong call
 		sprintf(respbuf, "%i", -EINVAL);//invalid args
-		printk(KERN_DEBUG "urrsched: call %s will return %s\n", callbuf, respbuf);
+		printk(KERN_DEBUG "urrsched: call %s will return %s because of wrong call\n", callbuf, respbuf);
 		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
@@ -66,7 +66,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
 
 	if (setSched != 0) {//If we have a bad egg
 		sprintf(respbuf, "%i", setSched);//invalid args
-		printk(KERN_DEBUG "urrsched: call %s will return %s\n", callbuf, respbuf);
+		printk(KERN_DEBUG "urrsched: call %s will return %s because sched_setscheduler returned error\n", callbuf, respbuf);
 		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
