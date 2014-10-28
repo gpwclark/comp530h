@@ -55,7 +55,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
 	rc = copy_from_user(callbuf, buf, count);
 	callbuf[MAX_CALL - 1] = '\0'; /* make sure it is a valid string */
 
-	if (strncmp(callbuf, URRSCHED_CALL, sizeof(URRSCHED_CALL) ) != 0) {//If we have the wrong call
+	if (strncmp(callbuf, URRSCHED_CALL, sizeof(URRSCHED_CALL) - 1 ) != 0) {//If we have the wrong call
 		sprintf(respbuf, "%i", -EINVAL);//invalid args
 		printk(KERN_DEBUG "urrsched: call %s will return %s because of wrong call\n", callbuf, respbuf);
 		preempt_enable();
