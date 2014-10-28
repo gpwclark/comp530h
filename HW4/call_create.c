@@ -51,7 +51,7 @@ void main (int argc, char* argv[])
 	strcat(argS, "\0");
 	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
 	do_syscall(argS);
-	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
+	fprintf(stdout, "Module urrsched returns %s to PID %d\n", strerror(atoi(resp_buf)), my_pid);
 
 	close (fp);
 	free(argS);
