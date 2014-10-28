@@ -13,6 +13,7 @@ char *respbuf;
 
 int file_value;
 struct dentry *dir, *file;
+struct sched_param newParams = {1};
 
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
@@ -24,7 +25,6 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
 {
 	int rc;
 	char callbuf[MAX_CALL];
-    struct sched_param newParams = {1};
 	/* the user's write() call should not include a count that exceeds
 	 * the size of the module's buffer for the call string.
 	 */
