@@ -13,7 +13,7 @@ char *respbuf;
 
 int file_value;
 struct dentry *dir, *file;
-struct sched_param newParams = {1};
+struct sched_param newParams = {.sched_priority = 1};
 
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
