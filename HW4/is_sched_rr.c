@@ -7,9 +7,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <linux/sched.h>
+#include <sched.h>
 #include "urrsched.h" /* used by both kernel module and user program */
 
+struct sched_param newParams = {.sched_priority = 1};
 int main (int argc, char* argv[]){
     int setSched = -1;
     int getSched = -1;
@@ -18,12 +19,16 @@ int main (int argc, char* argv[]){
         getSched = sched_getscheduler(pidtosched); 
         perror("Trying to Schedule given pid: ");
         if(getSched == -1){// We had an error
-            fprintf(stderr, "Exiting on error");
+            fprintf(stderr, "Exiting on error\n");
             exit(GENERR);
         }
         //now set the scheduling policy
         if(getSched != SCHED_RR){
-            fprintf(stderr, "Does not have a SCHED_RR policy");
+            fprintf(stderr, "Does not have a SCHED_RR policy\n");
+            sched_setscheduler(pidtosched, SCHED_RR, &newParams);
+        }
+        else{
+            fprintf(stderr, "Already has SCHED_RR policy\n");
         }
     }
     return 0;
