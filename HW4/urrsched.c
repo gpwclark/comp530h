@@ -30,7 +30,8 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
 }
 
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
-    get_rr_interval_orig(rq, task);
+    int rval = get_rr_interval_orig(rq, task);
+    return rval;
 }
 
 static ssize_t urrsched_call(struct file *file, const char __user *buf,
