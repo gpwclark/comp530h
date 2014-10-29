@@ -121,9 +121,9 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         //    return -ENOSPC;
         //}
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
-        update_curr_rt = call_task->sched_class->update_curr_rt;
-        watchdog = call_task->sched_class->watchdog;
-        requeue_task_rt = call_task->sched_class->requeue_task_rt;
+        update_curr_rt = call_task->rt->update_curr_rt;
+        watchdog = call_task->rt->watchdog;
+        requeue_task_rt = call_task->rt->requeue_task_rt;
 
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
