@@ -25,12 +25,12 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
-    task_tick_rt(rq, p, queued);
+    task_tick_orig(rq, p, queued);
     return;
 }
 
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
-    get_rr_interval_rt(rq, task);
+    get_rr_interval_orig(rq, task);
 }
 
 static ssize_t urrsched_call(struct file *file, const char __user *buf,
@@ -90,8 +90,8 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         //    return -ENOSPC;
         //}
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
-        task_tick_rt = call_task->sched_class->task_tick;
-        get_rr_interval_rt = call_task->sched_class->get_rr_interval;
+        task_tick_orig = call_task->sched_class->task_tick;
+        get_rr_interval_orig = call_task->sched_class->get_rr_interval;
 
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
