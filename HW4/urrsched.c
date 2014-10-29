@@ -6,7 +6,6 @@
 #include <linux/uaccess.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
-#include "sched_rt.c"
 #include "urrsched.h" /* used by both kernel module and user program */
 
 struct task_struct *call_task = NULL;
@@ -23,12 +22,41 @@ unsigned int firstCall = 1;
  */
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
+    update_curr_rt(rq);
 
+    watchdog(rq, p);
+
+    /*
+     * RR tasks need a special form of timeslice management.
+     * FIFO tasks have no timeslices.
+     */
+    if (p->policy != SCHED_RR)
+        return;
+
+    if (--p->rt.time_slice)
+        return;
+
+    p->rt.time_slice = DEF_TIMESLICE;
+
+    /*
+     * Requeue to the end of queue if we are not the only element
+     * on the queue:
+     */
+    if (p->rt.run_list.prev != p->rt.run_list.next) {
+        requeue_task_rt(rq, p, 0);
+        set_tsk_need_resched(p);
+    }
 
 }
 
 static void urr_get_rr_interval(struct rq *rq, struct task_struct *task){
-
+    /*
+     * Time slice is 0 for SCHED_FIFO tasks
+     */
+    if (task->policy == SCHED_RR)
+        return DEF_TIMESLICE;
+    else
+        return 0;
 }
 
 static ssize_t urrsched_call(struct file *file, const char __user *buf,
