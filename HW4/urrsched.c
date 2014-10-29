@@ -21,8 +21,8 @@ unsigned int firstCall = 1;
  * the requested function and preparing a response.
  */
 #define DEF_TIMESLICE (100 * HZ / 1000)
-unsigned int get_rr_interval_rt(struct rq *rq, struct task_struct *task);
-static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued);
+unsigned int get_rr_interval_rt;
+static void task_tick_rt;
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     task_tick_rt(rq, p, queued);
