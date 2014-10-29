@@ -54,7 +54,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
 
 }
 
-static void urr_get_rr_interval(struct rq *rq, struct task_struct *task){
+unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
     /*
      * Time slice is 0 for SCHED_FIFO tasks
      */
