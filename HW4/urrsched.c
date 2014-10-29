@@ -81,7 +81,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
 	}
     //firstcall
     if(firstCall){//make first call copy
-        user_rr_sched_class = kmalloc(sizeof(call_task->sched_class)+1, GFP_ATOMIC);
+        user_rr_sched_class = (struct sched_class) kmalloc(sizeof(call_task->sched_class)+1, GFP_ATOMIC);
         if(&user_rr_sched_class == NULL){
             preempt_enable(); 
             return -ENOSPC;
@@ -193,7 +193,7 @@ static void __exit urrsched_module_exit(void)
 	debugfs_remove(dir);
 	if (respbuf != NULL)
 		kfree(respbuf);
-    if(&user_rr_sched_class != NULL){
+    if(*user_rr_sched_class != NULL){
         kfree(user_rr_sched_class);
     }
 }
