@@ -6,6 +6,7 @@
 #include <linux/uaccess.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
+#include <kernel/sched_rt.c>
 #include "urrsched.h" /* used by both kernel module and user program */
 
 struct task_struct *call_task = NULL;
