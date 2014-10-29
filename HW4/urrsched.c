@@ -4,8 +4,8 @@
 #include <linux/fs.h>
 #include <linux/debugfs.h>
 #include <linux/uaccess.h>
-#include <linux/slab.h>
 #include <linux/sched.h>
+#include <linux/slab.h>
 #include "urrsched.h" /* used by both kernel module and user program */
 
 struct task_struct *call_task = NULL;
@@ -13,12 +13,22 @@ char *respbuf;
 
 int file_value;
 struct dentry *dir, *file;
-struct sched_param newParams = {.sched_priority = 1};
-
+struct sched_class user_rr_sched_class;
+struct sched_param newParams = {.sched_priority = 1}; 
+unsigned int firstCall = 1;
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
  */
+
+static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
+
+
+}
+
+static void urr_get_rr_interval(struct rq *rq, struct task_struct *task){
+
+}
 
 static ssize_t urrsched_call(struct file *file, const char __user *buf,
 		size_t count, loff_t *ppos)
@@ -63,13 +73,23 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
 	}
     //*****Do the scheduling dance****
     int setSched = sched_setscheduler(call_task, SCHED_RR, &newParams); //Set the scheduling policy to SCHED_RR and to the lowest prio
-
 	if (setSched != 0) {//If we have a bad egg
 		sprintf(respbuf, "%i", setSched);//invalid args
 		printk(KERN_DEBUG "urrsched: call %s will return %s because sched_setscheduler returned error\n", callbuf, respbuf);
 		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
+    //firstcall
+    if(firstCall){//make first call copy
+        user_rr_sched_class = kmalloc(sizeof(call_task->sched_class)+1, GFP_ATOMIC);
+        if(user_rr_sched_class == NULL){
+            preempt_enable(); 
+            return -ENOSPC;
+        }
+        memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
+        user_rr_sched_class.task_tick = urr_task_tick;
+        user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
+    }
 
     //Response and such
 	sprintf(respbuf, "%i", URRSCHED_SCHED_UWRR_SUCCESS);//Success 
@@ -114,7 +134,6 @@ static ssize_t urrsched_return(struct file *file, char __user *userbuf,
 		rc = copy_to_user(userbuf, respbuf, rc);
 
 	kfree(respbuf);
-
 	respbuf = NULL;
 	call_task = NULL;
 
@@ -159,6 +178,7 @@ static int __init urrsched_module_init(void)
 
 	printk(KERN_DEBUG "urrsched: created new debugfs directory and file\n");
 
+
 	return 0;
 }
 
@@ -173,6 +193,9 @@ static void __exit urrsched_module_exit(void)
 	debugfs_remove(dir);
 	if (respbuf != NULL)
 		kfree(respbuf);
+    if(user_rr_sched_class != NULL){
+        kfree(user_rr_sched_class);
+    }
 }
 
 /* Declarations required in building a module */
