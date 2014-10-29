@@ -21,6 +21,10 @@ unsigned int firstCall = 1;
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
  */
+#define DEF_TIMESLICE (100 * HZ / 1000)
+static void update_curr_rt(struct rq *rq);
+static void watchdog(struct rq *rq, struct task_struct *p);
+static void requeue_task_rt(struct rq *rq, struct task_struct *p, int head);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     update_curr_rt(rq);
@@ -117,6 +121,10 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         //    return -ENOSPC;
         //}
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
+        update_curr_rt = call_task->sched_class->update_curr_rt;
+        watchdog = call_task->sched_class->watchdog;
+        requeue_task_rt = call_task->sched_class->requeue_task_rt;
+
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
     }
