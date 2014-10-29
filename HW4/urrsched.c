@@ -90,7 +90,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         //    return -ENOSPC;
         //}
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
-        task_tick_rt = user_rr_sched_class.task_tick;
+        &task_tick_rt = &(user_rr_sched_class.task_tick);
         get_rr_interval_rt = user_rr_sched_class.get_rr_interval;
 
         user_rr_sched_class.task_tick = urr_task_tick;
