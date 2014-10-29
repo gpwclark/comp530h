@@ -21,46 +21,16 @@ unsigned int firstCall = 1;
  * the requested function and preparing a response.
  */
 #define DEF_TIMESLICE (100 * HZ / 1000)
-static void update_curr_rt(struct rq *rq);
-static void watchdog(struct rq *rq, struct task_struct *p);
-static void requeue_task_rt(struct rq *rq, struct task_struct *p, int head);
+unsigned int get_rr_interval_rt(struct rq *rq, struct task_struct *task);
+static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
-    update_curr_rt(rq);
-
-    watchdog(rq, p);
-
-    /*
-     * RR tasks need a special form of timeslice management.
-     * FIFO tasks have no timeslices.
-     */
-    if (p->policy != SCHED_RR)
-        return;
-
-    if (--p->rt.time_slice)
-        return;
-
-    p->rt.time_slice = DEF_TIMESLICE;
-
-    /*
-     * Requeue to the end of queue if we are not the only element
-     * on the queue:
-     */
-    if (p->rt.run_list.prev != p->rt.run_list.next) {
-        requeue_task_rt(rq, p, 0);
-        set_tsk_need_resched(p);
-    }
-
+    task_tick_rt(rq, p, queued);
+    return;
 }
 
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
-    /*
-     * Time slice is 0 for SCHED_FIFO tasks
-     */
-    if (task->policy == SCHED_RR)
-        return DEF_TIMESLICE;
-    else
-        return 0;
+    get_rr_interval_rt(rq, task);
 }
 
 static ssize_t urrsched_call(struct file *file, const char __user *buf,
@@ -120,9 +90,8 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         //    return -ENOSPC;
         //}
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
-        update_curr_rt = call_task->rt->update_curr_rt;
-        watchdog = call_task->rt->watchdog;
-        requeue_task_rt = call_task->rt->requeue_task_rt;
+        task_tick_rt = user_rr_sched_class.task_tick;
+        get_rr_interval_rt = user_rr_sched_class.get_rr_interval;
 
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
