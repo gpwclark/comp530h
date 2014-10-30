@@ -1,0 +1,1 @@
+This is the homework for fall 2014 COMP 530H at UNC. Linux kernel modules compiled and linked against the 2.6.32 Kernel with debugfs mounted (and with user r/w permissions, otherwise use sudo with caller binary's).
