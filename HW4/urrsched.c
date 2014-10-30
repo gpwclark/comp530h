@@ -34,11 +34,13 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
+    printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i \n", p->pid);
     task_tick_orig(rq, p, queued);
     return;
 }
 
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
+    printk(KERN_DEBUG "urrsched: urr_get_rr_interval for PID %i \n", task->pid);
     int rval = get_rr_interval_orig(rq, task);
     return rval;
 }
@@ -103,15 +105,15 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
         task_tick_orig = call_task->sched_class->task_tick;
         get_rr_interval_orig = call_task->sched_class->get_rr_interval;
-        printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i task_tick_orig: %p get_rr_interval_orig: %p\n", call_task->pid, task_tick_orig, get_rr_interval_orig);
+        printk(KERN_DEBUG "urrsched: for PID %i task_tick_orig: %p get_rr_interval_orig: %p\n", call_task->pid, task_tick_orig, get_rr_interval_orig);
 
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
-
+        printk(KERN_DEBUG "urrsched: for PID %i user_rr_sched_class.task_tick: %p user_rr_sched_class.get_rr_interval: %p\n", call_task->pid, user_rr_sched_class.task_tick, user_rr_sched_class.get_rr_interval);
         firstCall = 0;
     }
-        printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i user_rr_sched_class.task_tick: %p user_rr_sched_class.get_rr_interval: %p\n", call_task->pid, user_rr_sched_class.task_tick, user_rr_sched_class.get_rr_interval);
-
+    ///Here we set the call task to use our new sched class
+    call_task->sched_class = user_rr_sched_class;
     //Response and such
 	sprintf(respbuf, "%i", URRSCHED_SCHED_UWRR_SUCCESS);//Success 
 	/* Here the response has been generated and is ready for the user
