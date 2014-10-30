@@ -55,7 +55,7 @@ void main (int argc, char* argv[])
     //For testing busy wait
     while(1){
         char f = fgetc(stdin); 
-        if(f = EOF)
+        if(f == EOF)
             break;
         sleep(100);
     }
