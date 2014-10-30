@@ -55,10 +55,10 @@ void main (int argc, char* argv[])
     //For testing busy wait
     int counter = 0;
     while(1){
-        printf("%i-",counter++);
+        counter++;
         if(counter == 10)
             break;
-        sleep(100);
+        //sleep(100);
     }
 	close (fp);
 	free(argS);
