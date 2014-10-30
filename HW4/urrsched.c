@@ -101,12 +101,15 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         //    preempt_enable(); 
         //    return -ENOSPC;
         //}
+        printk(KERN_DEBUG "urrsched: urr_task_tick begin firstCall logic PID %i \n", call_task->pid);
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
         task_tick_orig = call_task->sched_class->task_tick;
         get_rr_interval_orig = call_task->sched_class->get_rr_interval;
 
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
+
+        firstCall = 0;
     }
 
     //Response and such
