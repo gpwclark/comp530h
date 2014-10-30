@@ -7,7 +7,7 @@
 #define GENERR -1
 #define URRSCHED_SCHED_UWRR_SUCCESS 0
 #define URRSCHED_CALL "sched_uwrr"
-
+#define MAX_URR_PS 1000
 char dir_name[] = "urrsched";
 char file_name[] = "call";
 

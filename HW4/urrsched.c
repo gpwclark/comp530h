@@ -8,19 +8,28 @@
 #include <linux/slab.h>
 #include "urrsched.h" /* used by both kernel module and user program */
 
+
+typedef struct __urrsched_ps_t urrshed_ps_t;
+struct __urrsched_ps_t {
+    int weight;
+    int time_slice;
+}
+///////
 struct task_struct *call_task = NULL;
 char *respbuf;
 
 int file_value;
 struct dentry *dir, *file;
+//
 struct sched_class user_rr_sched_class;
 struct sched_param newParams = {.sched_priority = 1}; 
 unsigned int firstCall = 1;
+urrshed_ps_t urr_processes[MAX_URR_PS];
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
  */
-#define DEF_TIMESLICE (100 * HZ / 1000)
+
 unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
