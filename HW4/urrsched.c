@@ -34,13 +34,11 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
-    printk(KERN_DEBUG "urrsched: urr_task_tick begin for PID %i \n", p->pid);
     task_tick_orig(rq, p, queued);
     return;
 }
 
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
-    printk(KERN_DEBUG "urrsched: urr_task_tick begin for PID %i \n", task->pid);
     int rval = get_rr_interval_orig(rq, task);
     return rval;
 }
@@ -101,14 +99,16 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         //    preempt_enable(); 
         //    return -ENOSPC;
         //}
-        printk(KERN_DEBUG "urrsched: urr_task_tick begin firstCall logic PID %i \n", call_task->pid);
+        printk(KERN_DEBUG "urrsched: urrsched begin firstCall logic PID %i \n", call_task->pid);
         memcpy(&user_rr_sched_class, &(call_task->sched_class), sizeof(call_task->sched_class)+1 );
         task_tick_orig = call_task->sched_class->task_tick;
         get_rr_interval_orig = call_task->sched_class->get_rr_interval;
+        printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i task_tick_orig: %p get_rr_interval_orig: %p\n", task->pid, task_tick_orig, get_rr_interval_orig);
 
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
 
+        printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i user_rr_sched_class.task_tick: %p user_rr_sched_class.get_rr_interval: %p\n", task->pid, user_rr_sched_class.task_tick, user_rr_sched_class.get_rr_interval);
         firstCall = 0;
     }
 
