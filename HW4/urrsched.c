@@ -108,9 +108,9 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
 
-        printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i user_rr_sched_class.task_tick: %p user_rr_sched_class.get_rr_interval: %p\n", call_task->pid, user_rr_sched_class.task_tick, user_rr_sched_class.get_rr_interval);
         firstCall = 0;
     }
+        printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i user_rr_sched_class.task_tick: %p user_rr_sched_class.get_rr_interval: %p\n", call_task->pid, user_rr_sched_class.task_tick, user_rr_sched_class.get_rr_interval);
 
     //Response and such
 	sprintf(respbuf, "%i", URRSCHED_SCHED_UWRR_SUCCESS);//Success 
