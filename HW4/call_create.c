@@ -53,9 +53,10 @@ void main (int argc, char* argv[])
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //For testing busy wait
+    int counter = 0;
     while(1){
-        char f = fgetc(stdin); 
-        if(f == EOF)
+        printf("%i-",counter++);
+        if(counter == 10)
             break;
         sleep(100);
     }
