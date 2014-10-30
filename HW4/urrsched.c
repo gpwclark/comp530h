@@ -9,11 +9,11 @@
 #include "urrsched.h" /* used by both kernel module and user program */
 
 
-typedef struct __urrsched_ps_t urrshed_ps_t;
-struct __urrsched_ps_t {
-    int weight;
-    int time_slice;
-}
+//typedef struct __urrsched_ps_t urrshed_ps_t;
+//struct __urrsched_ps_t {
+//    int weight;
+//    int time_slice;
+//}
 ///////
 struct task_struct *call_task = NULL;
 char *respbuf;
@@ -24,7 +24,7 @@ struct dentry *dir, *file;
 struct sched_class user_rr_sched_class;
 struct sched_param newParams = {.sched_priority = 1}; 
 unsigned int firstCall = 1;
-urrshed_ps_t urr_processes[MAX_URR_PS];
+//urrshed_ps_t urr_processes[MAX_URR_PS];
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
