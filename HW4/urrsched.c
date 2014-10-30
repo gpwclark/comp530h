@@ -113,7 +113,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         firstCall = 0;
     }
     ///Here we set the call task to use our new sched class
-    call_task->sched_class = user_rr_sched_class;
+    call_task->sched_class = &user_rr_sched_class;
     //Response and such
 	sprintf(respbuf, "%i", URRSCHED_SCHED_UWRR_SUCCESS);//Success 
 	/* Here the response has been generated and is ready for the user
