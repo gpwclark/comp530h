@@ -103,7 +103,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
     else{
         //we have a good call
         int convstr = kstrtoint( &(callbuf[sizeof(URRSCHED_CALL) + 1]), 10, &callbuf_param1 );
-        if (convstr != 0 || callbuf_param1 < 1) {//the parameter must be greater than 0
+        if (convstr != 0 ){//|| callbuf_param1 < 1) {//the parameter must be greater than 0
             printk(KERN_DEBUG "urrsched: call %s will return %s the parameter was not acceptable\n", callbuf, respbuf);
             preempt_enable(); 
             return -ENOSPC;
