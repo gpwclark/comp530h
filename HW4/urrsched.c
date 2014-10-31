@@ -14,6 +14,8 @@ struct __urrsched_ps_t {
     struct list_head mylist ;
     int pid;
     int weight;
+    long long unsigned int time_stamp1;
+    long long unsigned int time_stamp2;
 };
 LIST_HEAD(ps_info_list);
 ///////
@@ -43,17 +45,20 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
-    long long unsigned int time_stamp = (u64) ktime_to_ns(ktime_get());
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i BEGINtime %llu\n", p->pid, time_stamp);
+    //long long unsigned int timetemp = 0;
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
+
+    //timetemp = mySchedInfo->time_stamp1;//save last time, and set the time 2 to time 1
+    mySchedInfo->time_stamp2 = mySchedInfo->time_stamp1;
+
+    mySchedInfo->time_stamp1 = (u64) ktime_to_ns(ktime_get());//get a new time
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i DIFFtime %llu\n", p->pid, mySchedInfo->time_stamp1 - mySchedInfo->time_stamp2);
+
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
-    long long unsigned int time_stamp2 = (u64) ktime_to_ns(ktime_get());
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i ENDtime %llu\n", p->pid, time_stamp2);
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i DIFFtime %llu\n", p->pid, time_stamp2-time_stamp);
     return;
 }
 
@@ -148,6 +153,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
     INIT_LIST_HEAD(&(call_task_info->mylist));
     call_task_info->pid = call_task->pid;
     call_task_info->weight = callbuf_param1;
+    call_task_info->time_stamp1 = (u64) ktime_to_ns(ktime_get());
     list_add (&(call_task_info->mylist), &ps_info_list);
     ///Here we set the call task to use our new sched class
     call_task->sched_class = user_rr_sched_class;
