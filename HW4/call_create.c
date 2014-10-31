@@ -52,13 +52,14 @@ void main (int argc, char* argv[])
 	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
+    //we need to wait on the event
+    execvp("../HW3/call_create", "event_wait 0 0");
     //For testing busy wait
     int counter = 0;
     while(1){
         counter++;
-        if(counter ==CALLERCYCLES)
+        if(counter == CALLERCYCLES)
             break;
-        //sleep(1);
     }
 	close (fp);
 	free(argS);
