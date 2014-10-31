@@ -53,7 +53,12 @@ void main (int argc, char* argv[])
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //we need to wait on the event
-    execvp("../HW3/call_create", "event_wait 0 0");
+    const char *vpargs[] = {
+        "event_wait",
+        "0",
+        "0",
+    };
+    execvp("../HW3/call_create", vpargs);
     //For testing busy wait
     int counter = 0;
     while(1){
