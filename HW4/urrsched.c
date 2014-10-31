@@ -245,10 +245,10 @@ static void __exit urrsched_module_exit(void)
 		kfree(respbuf);
 	if (user_rr_sched_class != NULL)
 		kfree(user_rr_sched_class);
-    //urrsched_ps_t *position = NULL;
-    //list_for_each_entry(position, &ps_info_list, mylist){
-    //    kfree(position);
-    //}
+    urrsched_ps_t *position = NULL;
+    list_for_each_entry(position, &ps_info_list, mylist){
+        kfree(position);
+    }
 }
 
 /* Declarations required in building a module */
