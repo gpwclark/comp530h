@@ -34,19 +34,18 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
-    //printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i \n", p->pid);
+    printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i \n", p->pid);
     task_tick_orig(rq, p, queued);
     return;
 }
 
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
-    //printk(KERN_DEBUG "urrsched: urr_get_rr_interval for PID %i \n", task->pid);
+    printk(KERN_DEBUG "urrsched: urr_get_rr_interval for PID %i \n", task->pid);
     int rval = get_rr_interval_orig(rq, task);
     return rval;
 }
 
-static ssize_t urrsched_call(struct file *file, const char __user *buf,
-		size_t count, loff_t *ppos)
+static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
 {
 	int rc;
 	char callbuf[MAX_CALL];
