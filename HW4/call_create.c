@@ -58,7 +58,7 @@ void main (int argc, char* argv[])
         counter++;
         if(counter ==20)
             break;
-        sleep(100);
+        sleep(1);
     }
 	close (fp);
 	free(argS);
