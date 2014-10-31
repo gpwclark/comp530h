@@ -66,7 +66,7 @@ void main (int argc, char* argv[])
         counter++;
         if(counter == CALLERCYCLES)
             break;
-        sleep(1)
+        sleep(1);
     }
 	close (fp);
 	free(argS);
