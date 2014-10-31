@@ -60,7 +60,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
 {
 	int rc;
 	char callbuf[MAX_CALL];
-    long int callbuf_param1 = -1;
+    int callbuf_param1 = -1;
 	/* the user's write() call should not include a count that exceeds
 	 * the size of the module's buffer for the call string.
 	 */
@@ -99,7 +99,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
 	}
     else{
         //we have a good call
-        int convstr = kstrtoint( &(callbuf[sizeof(URRSCHED_CALL) + 1]), 10, callbuf_param1 );
+        int convstr = kstrtoint( &(callbuf[sizeof(URRSCHED_CALL) + 1]), 10, &callbuf_param1 );
         if (convstr != 0) {
             printk(KERN_DEBUG "urrsched: call %s will return %s the parameter was not acceptable\n", callbuf, respbuf);
             preempt_enable(); 
@@ -132,7 +132,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
     }
     //list to keep track of each ps's weight info
     urrsched_ps_t *call_task_info = kmalloc(sizeof(urrsched_ps_t), GFP_ATOMIC);
-    call_task_info->mylist = INIT_LIST_HEAD(&(call_task_info->mylist));
+    INIT_LIST_HEAD(&(call_task_info->mylist));
     call_task_info->pid = call_task->pid;
     call_task_info->weight = callbuf_param1;
     list_add (&(call_task_info->mylist), &ps_info_list);
