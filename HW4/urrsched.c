@@ -103,8 +103,8 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
     }
     struct sched_class user_rr_sched_class;
     memcpy(&user_rr_sched_class, &(*(call_task->sched_class)), sizeof(call_task->sched_class)+1 );        
-    user_rr_sched_class->task_tick = urr_task_tick;
-    user_rr_sched_class->get_rr_interval = urr_get_rr_interval;
+    user_rr_sched_class.task_tick = urr_task_tick;
+    user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
     ///Here we set the call task to use our new sched class
     //call_task->sched_class = &user_rr_sched_class;
     //Response and such
