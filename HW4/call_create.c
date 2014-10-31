@@ -79,7 +79,7 @@ void do_syscall(char *call_string)
 
   rc = write(fp, call_buf, strlen(call_buf) + 1);
 	if (rc == -1) {
-		fprintf (stderr, "error writing %s\n%s", the_file, strerror(errno));
+		fprintf (stderr, "error writing %s\n%s\n", the_file, strerror(errno));
 
 		fflush(stderr);
 		exit (-1);
