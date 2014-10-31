@@ -70,6 +70,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
 	int rc;
 	char callbuf[MAX_CALL];
     int callbuf_param1 = -1;
+    char * calltemp = NULL;
 	/* the user's write() call should not include a count that exceeds
 	 * the size of the module's buffer for the call string.
 	 */
@@ -108,10 +109,10 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
 	}
     else{
         //we have a good call
-        callbuf_param1 = strchr(callbuf,' ');
-        callbuf_param1[0] = '\0';
-        callbuf_param1++;// we want the pointer after the space
-        int convstr = kstrtoint( &(callbuf[sizeof(URRSCHED_CALL) + 1]), 0, &callbuf_param1 );
+        calltemp = strchr(callbuf,' ');
+        calltemp[0] = '\0';
+        calltemp++;// we want the pointer after the space
+        int convstr = kstrtoint( calltemp, 0, &callbuf_param1 );
         if (convstr != 0 ){
             printk(KERN_DEBUG "urrsched: call %s will return %s the parameter %i was not acceptable\n", callbuf, respbuf, callbuf_param1);
             preempt_enable(); 
