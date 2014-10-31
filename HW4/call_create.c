@@ -53,7 +53,7 @@ void main (int argc, char* argv[])
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //we need to wait on the event
-    const char *vpargs[] = {
+    char * const* vpargs = {
         "event_wait",
         "0",
         "0",
