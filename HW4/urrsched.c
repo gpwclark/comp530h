@@ -43,7 +43,8 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
-    printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i \n", p->pid);
+    long long unsigned int time_stamp = (u64) ktime_to_ns(ktime_get());
+    printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i time %llu\n", p->pid);
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
