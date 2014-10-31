@@ -9,7 +9,7 @@
 #define URRSCHED_CALL "sched_uwrr"
 #define MAX_URR_PS 1000
 #define TENMS (10 * HZ / 1000)
-#define CALLERCYCLES 1000
+#define CALLERCYCLES 100000000
 char dir_name[] = "urrsched";
 char file_name[] = "call";
 
