@@ -43,7 +43,7 @@ static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i \n", p->pid);
-    urrshed_ps_t mySchedInfo = get_ps_info(p->pid);
+    urrsched_ps_t mySchedInfo = get_ps_info(p->pid);
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
