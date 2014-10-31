@@ -44,13 +44,16 @@ static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     long long unsigned int time_stamp = (u64) ktime_to_ns(ktime_get());
-    printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i time %llu\n", p->pid);
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i BEGINtime %llu\n", p->pid, time_stamp);
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    long long unsigned int time_stamp2 = (u64) ktime_to_ns(ktime_get());
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i ENDtime %llu\n", p->pid, time_stamp2);
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i DIFFtime %llu\n", p->pid, time_stamp2-time_stamp);
     return;
 }
 
