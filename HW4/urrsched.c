@@ -45,12 +45,9 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
-    //long long unsigned int timetemp = 0;
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
-
-    //timetemp = mySchedInfo->time_stamp1;//save last time, and set the time 2 to time 1
     mySchedInfo->time_stamp2 = mySchedInfo->time_stamp1;
 
     mySchedInfo->time_stamp1 = (u64) ktime_to_ns(ktime_get());//get a new time
