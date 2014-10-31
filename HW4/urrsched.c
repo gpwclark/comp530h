@@ -29,7 +29,7 @@ unsigned int firstCall = 1;
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
  */
-static *urrsched_ps_t get_ps_t(pid_t pid){
+static urrsched_ps_t *get_ps_t(pid_t pid){
     urrsched_ps_t *position = NULL;
     list_for_each_entry(position, &ps_info_list, mylist){
         if(position->pid == pid){
