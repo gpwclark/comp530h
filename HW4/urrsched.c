@@ -95,7 +95,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
 	}
     //firstcall
     if(firstCall){//make first call copy
-        user_rr_sched_class = (struct sched_class) kmalloc(sizeof(*(call_task->sched_class) ), GFP_ATOMIC);
+        user_rr_sched_class = kmalloc(sizeof(*(call_task->sched_class) ), GFP_ATOMIC);
         printk(KERN_DEBUG "urrsched: urrsched begin firstCall logic PID %i \n", call_task->pid);
         task_tick_orig = call_task->sched_class->task_tick;
         get_rr_interval_orig = call_task->sched_class->get_rr_interval;
