@@ -56,7 +56,7 @@ void main (int argc, char* argv[])
     int counter = 0;
     while(1){
         counter++;
-        if(counter ==10000)
+        if(counter ==10000000)
             break;
         //sleep(1);
     }
