@@ -36,6 +36,7 @@ static urrsched_ps_t *get_ps_info(pid_t pid){
             return position;
         }
     }
+    return NULL;
 }
 
 unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
@@ -44,6 +45,8 @@ static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i \n", p->pid);
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
+    if(mySchedInfo == NULL)
+        return;
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
