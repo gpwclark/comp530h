@@ -36,7 +36,7 @@ void main (int argc, char* argv[])
 	}
 
 	int my_pid = getpid();
-	char* argS = malloc(sizeof(char) * MAX_CALL);
+    char* argS = malloc(sizeof(char) * MAX_CALL);
 	i = 1;
 	while(1){
 		if(i < argc){

@@ -9,33 +9,44 @@
 #include "urrsched.h" /* used by both kernel module and user program */
 
 
-//typedef struct __urrsched_ps_t urrshed_ps_t;
-//struct __urrsched_ps_t {
-//    int weight;
-//    int time_slice;
-//}
+typedef struct __urrsched_ps_t urrsched_ps_t;
+struct __urrsched_ps_t {
+    struct list_head mylist ;
+    int pid;
+    int weight;
+};
+LIST_HEAD(ps_info_list);
 ///////
 struct task_struct *call_task = NULL;
 char *respbuf;
-
 struct sched_class *user_rr_sched_class;
 int file_value;
 struct dentry *dir, *file;
 //
 struct sched_param newParams = {.sched_priority = 1}; 
 unsigned int firstCall = 1;
-//urrshed_ps_t urr_processes[MAX_URR_PS];
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
  */
+static *urrsched_ps_t get_ps_t(pid_t pid){
+    urrsched_ps_t *position = NULL;
+    list_for_each_entry(position, &ps_info_list, mylist){
+        if(position->pid == pid){
+            return position;
+        }
+    }
+}
 
 unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     printk(KERN_DEBUG "urrsched: urr_task_tick for PID %i \n", p->pid);
+    urrshed_ps_t mySchedInfo = get_ps_info(p->pid);
+    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
+    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     return;
 }
 
@@ -49,6 +60,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
 {
 	int rc;
 	char callbuf[MAX_CALL];
+    long int callbuf_param1 = -1;
 	/* the user's write() call should not include a count that exceeds
 	 * the size of the module's buffer for the call string.
 	 */
@@ -85,6 +97,15 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
 		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
+    else{
+        //we have a good call
+        callbuf_param1 = strol( (callbuf[sizeof(URRSCHED_CALL) + 1]) );
+        if (callbuf_param1 < 0) {
+            printk(KERN_DEBUG "urrsched: call %s will return %s the parameter was not acceptable\n", callbuf, respbuf);
+            preempt_enable(); 
+            return -ENOSPC;
+        }
+    }
     //*****Do the scheduling dance****
     int setSched = sched_setscheduler(call_task, SCHED_RR, &newParams); //Set the scheduling policy to SCHED_RR and to the lowest prio
 	if (setSched != 0) {//If we have a bad egg
@@ -109,6 +130,12 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
         //printk(KERN_DEBUG "urrsched: for PID %i task_tick_orig: %p get_rr_interval_orig: %p\n", call_task->pid, task_tick_orig, get_rr_interval_orig);
         firstCall = 0;
     }
+    //list to keep track of each ps's weight info
+    urrsched_ps_t *call_task_info = kmalloc(sizeof(urrsched_ps_t), GFP_ATOMIC);
+    call_task_info->mylist = INIT_LIST_HEAD(&(call_task_info->mylist));
+    call_task_info->pid = call_task->pid;
+    call_task_info->weight = callbuf_param1;
+    list_add (&(call_task_info->mylist), &ps_info_list);
     ///Here we set the call task to use our new sched class
     call_task->sched_class = user_rr_sched_class;
     //Response and such
