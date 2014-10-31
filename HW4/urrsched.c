@@ -70,7 +70,7 @@ unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
 static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
 {
 
-    printk(KERN_DEBUG "urrsched: HZ ==  \n", HZ);
+    printk(KERN_DEBUG "urrsched: HZ == &i \n", HZ);
 	int rc;
 	char callbuf[MAX_CALL];
     int callbuf_param1 = -1;
