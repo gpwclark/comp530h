@@ -209,6 +209,8 @@ static void __exit urrsched_module_exit(void)
 	debugfs_remove(dir);
 	if (respbuf != NULL)
 		kfree(respbuf);
+	if (user_rr_sched_class != NULL)
+		kfree(user_rr_sched_class);
 }
 
 /* Declarations required in building a module */
