@@ -99,14 +99,16 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf,
         printk(KERN_DEBUG "urrsched: urrsched begin firstCall logic PID %i \n", call_task->pid);
         task_tick_orig = call_task->sched_class->task_tick;
         get_rr_interval_orig = call_task->sched_class->get_rr_interval;
-        memcpy(&user_rr_sched_class, &(*(call_task->sched_class)), sizeof(call_task->sched_class)+1 );        
+        memcpy(&user_rr_sched_class, call_task->sched_class, sizeof(call_task->sched_class)+1 );        
         user_rr_sched_class.task_tick = urr_task_tick;
         user_rr_sched_class.get_rr_interval = urr_get_rr_interval;
         printk(KERN_DEBUG "urrsched: for PID %i task_tick_orig: %p get_rr_interval_orig: %p\n", call_task->pid, task_tick_orig, get_rr_interval_orig);
         firstCall = 0;
+        //Test the memcpy
+
     }
     ///Here we set the call task to use our new sched class
-    call_task->sched_class = &user_rr_sched_class;
+    //call_task->sched_class = &user_rr_sched_class;
     //Response and such
 	sprintf(respbuf, "%i", URRSCHED_SCHED_UWRR_SUCCESS);//Success 
 	/* Here the response has been generated and is ready for the user
