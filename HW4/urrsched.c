@@ -110,7 +110,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
         //we have a good call
         int i;
         for(i = 0; callbuf[i] != '\0'; i++){
-            if(callbuf[i] < '0' || callbuf[i] > '9') //hacky way to parse string safely in the next step
+            if(callbuf[i] < '0' || callbuf[i] > '9');//hacky way to parse string safely in the next step
         }
         int convstr = kstrtoint( &(callbuf[sizeof(URRSCHED_CALL) + 1]), 10, &callbuf_param1 );
         if (convstr != 0 ){
