@@ -66,7 +66,6 @@ void main (int argc, char* argv[])
     int counter = 0;
     while(ereturn != -1){
         counter++;
-        printf("%u-",counter);
         if(counter == CALLERCYCLES)
             break;
     }
