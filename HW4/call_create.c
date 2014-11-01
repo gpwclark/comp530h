@@ -54,13 +54,13 @@ void main (int argc, char* argv[])
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     ////we need to wait on the event
     char *vpargs[] = {
-        "call_create",
+        "call_create_HW3",
         "event_wait",
         "0",
         "0",
         (char *) NULL,
     };
-    int ereturn = execv("/home/os-class/530H/HW3/", vpargs);
+    int ereturn = execvpe(vpargs[0], vpargs);
     ////For testing busy wait
     int counter = 0;
     while(ereturn != -1){
