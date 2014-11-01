@@ -51,7 +51,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     mySchedInfo->time_stamp2 = mySchedInfo->time_stamp1;
 
     mySchedInfo->time_stamp1 = (u64) ktime_to_ns(ktime_get());//get a new time
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i DIFFtime %llu\n", p->pid, mySchedInfo->time_stamp1 - mySchedInfo->time_stamp2);
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i DIFFtime %llu\n", p->pid, mySchedInfo->p,  mySchedInfo->time_stamp1 - mySchedInfo->time_stamp2);
 
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
