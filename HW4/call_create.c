@@ -54,7 +54,7 @@ void main (int argc, char* argv[])
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     ////we need to wait on the event
     char *vpargs[] = {
-        "../HW3/call_create",
+        "~/530H/HW3/call_create",
         "event_wait",
         "0",
         "0",
