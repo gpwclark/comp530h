@@ -14,8 +14,8 @@ struct __urrsched_ps_t {
     struct list_head mylist ;
     int pid;
     int weight;
-    long long unsigned int time_stamp1;
-    long long unsigned int time_stamp2;
+    ktime_t start;
+    ktime_t end;
 };
 LIST_HEAD(ps_info_list);
 ///////
@@ -48,14 +48,14 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
-    mySchedInfo->time_stamp2 = mySchedInfo->time_stamp1;
-
-    mySchedInfo->time_stamp1 = (u64) ktime_to_ns(ktime_get());//get a new time
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i DIFFtime %llu\n", p->pid, mySchedInfo->weight,  mySchedInfo->time_stamp1 - mySchedInfo->time_stamp2);
+    mySchedInfo->end = mySchedInfo->start;
 
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+
+    mySchedInfo->start = ktime_get();//get a new time
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i DIFFtime %llu\n", p->pid, mySchedInfo->weight,  (u64) ktime_to_ns(ktime_sub(end,start)) );
     return;
 }
 
@@ -152,7 +152,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
     INIT_LIST_HEAD(&(call_task_info->mylist));
     call_task_info->pid = call_task->pid;
     call_task_info->weight = callbuf_param1;
-    call_task_info->time_stamp1 = (u64) ktime_to_ns(ktime_get());
+    call_task_info->start = ktime_get();
     list_add (&(call_task_info->mylist), &ps_info_list);
     ///Here we set the call task to use our new sched class
     call_task->sched_class = user_rr_sched_class;
