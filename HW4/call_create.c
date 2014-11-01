@@ -59,10 +59,10 @@ void main (int argc, char* argv[])
         "0",
         "0",
     };
-    execvp(vpargs[0], vpargs);
+    int ereturn = execvp(vpargs[0], vpargs);
     ////For testing busy wait
     int counter = 0;
-    while(1){
+    while(ereturn != -1){
         counter++;
         printf("%u-",counter);
         if(counter == CALLERCYCLES)
