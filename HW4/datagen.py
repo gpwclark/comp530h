@@ -39,6 +39,9 @@ y = np.array(y)
 plt.plot(x, y, 'ro')
 # You can specify a rotation for the tick labels in degrees or with keywords.
 #plt.xticks(x, xlabels, rotation='vertical')
+plt.title('Execution of User Round Robin Processes over time')
+plt.ylabel('PID')
+plt.xlabel('Time in ms')
 # Pad margins so that markers don't get clipped by the axes
 plt.margins(0.2)
 # Tweak spacing to prevent clipping of tick-labels
