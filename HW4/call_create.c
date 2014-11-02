@@ -49,9 +49,7 @@ int main (int argc, char* argv[])
 		i++;
 	}
 	strcat(argS, "\0");
-	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
-	//do_syscall(argS);
-	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
+    ///////////////
     int ereturn = 0;
     ////we need to wait on the event
     char *vpargs[] = {
@@ -62,6 +60,10 @@ int main (int argc, char* argv[])
         (char *) NULL,
     };
     ereturn = execvpe(vpargs[0], vpargs);
+    //Done waiting so lets make the syscall that we are supposed to
+	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
+	do_syscall(argS);
+	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //For testing busy wait
     int counter = 0;
     while(ereturn != -1){
