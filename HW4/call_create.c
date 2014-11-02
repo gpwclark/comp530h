@@ -72,7 +72,7 @@ int main (int argc, char* argv[])
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //For testing busy wait
-    long long int counter = 0;
+    long long counter = 0;
     while(ereturn != -1){
         counter++;
         if(counter == CALLERCYCLES)
