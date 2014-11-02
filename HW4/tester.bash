@@ -1,4 +1,7 @@
 #!/bin/bash
+echo Rotate the logs:
+sudo logrotate --force /etc/logrotate.conf
+echo Make sure everything is newly compiled and inserted
 ./insertnew.bash
 cd ../HW3
 ./insertnew.bash
