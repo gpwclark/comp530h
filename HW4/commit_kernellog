@@ -1,0 +1,8 @@
+#!/bin/bash
+sudo cp /var/log/kernel.log .
+sudo chown $USER kernel.log
+sudo chmod 666 kernel.log
+make clean
+git commit -m 'updated log from testing' *
+git push origin master
+
