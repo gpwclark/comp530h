@@ -50,7 +50,7 @@ int main (int argc, char* argv[])
 	}
 	strcat(argS, "\0");
 	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
-	do_syscall(argS);
+	//do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     int ereturn = 0;
     ////we need to wait on the event
