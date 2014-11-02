@@ -16,6 +16,7 @@ struct __urrsched_ps_t {
     int weight;
     ktime_t start;//time 1
     ktime_t end;//time 2
+    int tick_count;
     //ktime_t total_runtime;
 };
 LIST_HEAD(ps_info_list);
@@ -49,6 +50,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
+    mySchedInfo->tick_count += 1;
     mySchedInfo->end = mySchedInfo->start;
 
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
@@ -155,6 +157,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
     call_task_info->pid = call_task->pid;
     call_task_info->weight = callbuf_param1;
     call_task_info->start = ktime_get();
+    call_task_info->tick_count = 0;
     list_add (&(call_task_info->mylist), &ps_info_list);
     ///Here we set the call task to use our new sched class
     call_task->sched_class = user_rr_sched_class;
