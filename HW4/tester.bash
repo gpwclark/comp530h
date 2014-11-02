@@ -27,3 +27,4 @@ echo
 sudo cp /var/log/kernel.log .
 sudo chown $USER kernel.log
 sudo chmod 666 kernel.log
+git commit -m 'updated log from testing' * ; git push origin master
