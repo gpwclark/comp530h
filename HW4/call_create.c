@@ -11,7 +11,7 @@
 #include <errno.h>
 #include "urrsched.h" /* used by both kernel module and user program */
 
-int fp;
+int fp, childPID;
 char the_file[256] = "/sys/kernel/debug/";
 char call_buf[MAX_CALL];  /* assumes no bufferline is longer */
 char resp_buf[MAX_RESP];  /* assumes no bufferline is longer */
