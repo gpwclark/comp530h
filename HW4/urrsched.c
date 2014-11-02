@@ -15,7 +15,7 @@ struct __urrsched_ps_t {
     int pid;
     int weight;
     ktime_t start;//time 1
-    ktime_t end;//time 2
+    ktime_t last_time;//time 2
     int tick_count;
     //ktime_t total_runtime;
 };
@@ -51,15 +51,15 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     if(mySchedInfo == NULL)
         return;
     mySchedInfo->tick_count += 1;
-    mySchedInfo->end = mySchedInfo->start;
 
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
 
-    mySchedInfo->start = ktime_get();//get a new time
-    s64 actual_time = ktime_to_ns(ktime_sub(mySchedInfo->start, mySchedInfo->end));
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i timeslice %i DIFFtime %lld tick_count %i\n", p->pid, mySchedInfo->weight, p->rt.time_slice,  (long long)actual_time, mySchedInfo->tick_count );
+    mySchedInfo->last_time = ktime_get();//get a new time
+    s64 actual_time = ktime_to_ns(mySchedInfo->last_time);
+    s64 run_time = ktime_to_ns(ktime_sub(mySchedInfo->last_time, mySchedInfo->start));
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i timeslice %i RUNtime %lld ACTUALtime %lld tick_count %i\n", p->pid, mySchedInfo->weight, p->rt.time_slice, (long long) run_time, (long long)actual_time, mySchedInfo->tick_count );
     return;
 }
 
