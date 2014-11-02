@@ -15,11 +15,23 @@ call_create_HW3 event_create HW4 #create the event to wait on, the callers will 
 sleep 2
 sudo ./call_create sched_uwrr 1 &
 sleep 1
+sudo ./call_create sched_uwrr 2 &
+sleep 1
+sudo ./call_create sched_uwrr 3 &
+sleep 1
+sudo ./call_create sched_uwrr 4 &
+sleep 1
+sudo ./call_create sched_uwrr 5 &
+sleep 1
+sudo ./call_create sched_uwrr 6 &
+sleep 1
+sudo ./call_create sched_uwrr 7 &
+sleep 1
+sudo ./call_create sched_uwrr 8 &
+sleep 1
+sudo ./call_create sched_uwrr 9 &
+sleep 1
 sudo ./call_create sched_uwrr 10 &
-sleep 1
-sudo ./call_create sched_uwrr 100 &
-sleep 1
-sudo ./call_create sched_uwrr 1000 &
 sleep 5
 echo Prepare to release waiters
 echo
