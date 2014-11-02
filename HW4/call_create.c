@@ -18,7 +18,7 @@ char resp_buf[MAX_RESP];  /* assumes no bufferline is longer */
 
 void do_syscall(char *call_string);
 
-void main (int argc, char* argv[])
+int main (int argc, char* argv[])
 {
 	int i;
 	int rc = 0;
@@ -71,6 +71,7 @@ void main (int argc, char* argv[])
     }
 	close (fp);
 	free(argS);
+    return 0;
 } /* end main() */
 
 void do_syscall(char *call_string)
