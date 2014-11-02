@@ -24,3 +24,6 @@ sleep 5
 echo Prepare to release waiters
 echo
 ../HW3/call_create event_signal 0 
+sudo cp /var/log/kernel.log .
+sudo chown $USER kernel.log
+sudo chmod 666 kernel.log
