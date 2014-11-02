@@ -1,4 +1,5 @@
-#include <linux/module.h> #include <linux/kernel.h>
+#include <linux/module.h> 
+#include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/fs.h>
 #include <linux/debugfs.h>
@@ -11,7 +12,7 @@
 #include <linux/rcupdate.h>
 #include <linux/wait.h>
 #include <linux/preempt.h>
-#include "usersync.h" /* used by both kernel module and user program */
+#include "usersync.h"
 
 
 typedef struct __respbuf_q_element {
