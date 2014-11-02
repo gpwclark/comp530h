@@ -14,8 +14,9 @@ struct __urrsched_ps_t {
     struct list_head mylist ;
     int pid;
     int weight;
-    ktime_t start;
-    ktime_t end;
+    ktime_t start;//time 1
+    ktime_t end;//time 2
+    //ktime_t total_runtime;
 };
 LIST_HEAD(ps_info_list);
 ///////
