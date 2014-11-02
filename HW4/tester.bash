@@ -1,7 +1,7 @@
 #!/bin/bash
 echo Rotate the logs:
 sudo logrotate --force /etc/logrotate.conf
-sudo su -c "cat /dev/null > /var/log/kern.log"
+sudo su -c "cat /dev/null > /var/log/kernel.log"
 echo Make sure everything is newly compiled and inserted
 ./insertnew.bash
 cd ../HW3
