@@ -17,7 +17,6 @@ struct __urrsched_ps_t {
     ktime_t start;//time 1
     ktime_t last_time;//time 2
     int tick_count;
-    //ktime_t total_runtime;
 };
 LIST_HEAD(ps_info_list);
 ///////
@@ -26,6 +25,7 @@ char *respbuf;
 struct sched_class *user_rr_sched_class;
 int file_value;
 struct dentry *dir, *file;
+urrsched_ps_t *last_ps_info = NULL;
 //
 struct sched_param newParams = {.sched_priority = 1}; 
 unsigned int firstCall = 1;
@@ -50,6 +50,10 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
+    if(last_ps_info != NULL && last_ps_info != mySchedInfo){//we have changed ps
+
+        printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i RUNtime %lld ACTUALtime %lld tick_count %i\n", last_ps_info->pid, last_ps_info->weight, (long long) last_ps_info->start, (long long)last_ps_info->last_time, last_ps_info->tick_count );
+    }
     mySchedInfo->tick_count += 1;
 
     p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
@@ -59,7 +63,8 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     mySchedInfo->last_time = ktime_get();//get a new time
     s64 actual_time = ktime_to_ns(mySchedInfo->last_time);
     s64 run_time = ktime_to_ns(ktime_sub(mySchedInfo->last_time, mySchedInfo->start));
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i timeslice %i RUNtime %lld ACTUALtime %lld tick_count %i\n", p->pid, mySchedInfo->weight, p->rt.time_slice, (long long) run_time, (long long)actual_time, mySchedInfo->tick_count );
+    //printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i timeslice %i RUNtime %lld ACTUALtime %lld tick_count %i\n", p->pid, mySchedInfo->weight, p->rt.time_slice, (long long) run_time, (long long)actual_time, mySchedInfo->tick_count );
+    last_ps_info = mySchedInfo;//keep track of last ps in this module using this function
     return;
 }
 
