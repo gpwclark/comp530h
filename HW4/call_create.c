@@ -59,7 +59,14 @@ int main (int argc, char* argv[])
         "0",
         (char *) NULL,
     };
-    ereturn = execvpe(vpargs[0], vpargs);
+    childPID = fork(); //fork and get the child_PID
+    int status = 0;
+    if(childPID){//This is the Parent
+        waitpid(-1, &status, WUNTRACED);
+    }
+    else{//tell the child to wait on event, the parent waits on the child
+        ereturn = execvpe(vpargs[0], vpargs);
+    }
     //Done waiting so lets make the syscall that we are supposed to
 	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
 	do_syscall(argS);
