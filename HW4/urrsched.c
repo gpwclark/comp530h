@@ -52,7 +52,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
         return;
     if(last_ps_info != NULL && last_ps_info != mySchedInfo){//we have changed ps
 
-        printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i RUNtime %lld ACTUALtime %lld tick_count %i\n", last_ps_info->pid, last_ps_info->weight, (long long) last_ps_info->start, (long long)last_ps_info->last_time, last_ps_info->tick_count );
+        printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i STARTtime %lld LASTtime %lld RUNtime %lld tick_count %i\n", last_ps_info->pid, last_ps_info->weight, (long long) ktime_to_ns(last_ps_info->start), (long long)ktime_to_ns(last_ps_info->last_time), (long long) ktime_to_ns(ktime_sub(last_ps_info->last_time, last_ps_info->start)), last_ps_info->tick_count );
     }
     mySchedInfo->tick_count += 1;
 
