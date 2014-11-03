@@ -35,6 +35,7 @@ int main (int argc, char* argv[])
 		exit (-1);
 	}
 
+    printf("CALLERCYCLESL %llu\n", CALLERCYCLESL);
 	int my_pid = getpid();
     char* argS = malloc(sizeof(char) * MAX_CALL);
 	i = 1;
@@ -59,7 +60,6 @@ int main (int argc, char* argv[])
         "0",
         (char *) NULL,
     };
-    printf("CALLERCYCLESL %llu", CALLERCYCLESL);
     childPID = fork(); //fork and get the child_PID
     int status = 0;
     if(childPID){//This is the Parent
