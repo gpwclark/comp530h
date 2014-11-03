@@ -52,7 +52,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
-    if(lastPSInfo != mySchedInfo){
+    if(lastPSInfo != NULL && lastPSInfo != mySchedInfo){
         lastPSInfo->p->rt.time_slice = mySchedInfo->weight * TENMS;
     }
     lastPSInfo = mySchedInfo;
