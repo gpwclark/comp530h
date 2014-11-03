@@ -1,115 +1,115 @@
-Nov  2 22:57:46 localhost kernel: urrsched: created new debugfs directory and file
-Nov  2 22:57:51 localhost kernel: usersync: created new debugfs directory and file
-Nov  2 22:57:56 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdcc0 index=0 call_task->PID 3659 c158d76c current->PID 3659 c158d76c In read() myrespbuf->respbuf == 0
-Nov  2 22:57:58 localhost kernel: usersync: myrespbuf=f83fdcc0 index=0 call_task->PID 3659 current->PID 3659 In read() myrespbuf->respbuf == 0
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:57:58 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:57:58 localhost kernel: usersync: prepare to wait non-exclusively
-Nov  2 22:58:04 localhost kernel: usersync: wait is preparing to schedule
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdde0 index=12 myindex->call_task=3697 f5d2c76c PID 3697 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdde0 index=12 call_task->PID 3697 f5d2c76c current->PID 3697 f5d2c76c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdde0 index=12 call_task->PID 3697 current->PID 3697 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fddc8 index=11 myindex->call_task=3696 f5d2ccbc PID 3696 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fddc8 index=11 call_task->PID 3696 f5d2ccbc current->PID 3696 f5d2ccbc In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fddc8 index=11 call_task->PID 3696 current->PID 3696 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fddb0 index=10 myindex->call_task=3694 f5dd476c PID 3694 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fddb0 index=10 call_task->PID 3694 f5dd476c current->PID 3694 f5dd476c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fddb0 index=10 call_task->PID 3694 current->PID 3694 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd98 index=9 myindex->call_task=3695 f5dd421c PID 3695 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdd98 index=9 call_task->PID 3695 f5dd421c current->PID 3695 f5dd421c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd98 index=9 call_task->PID 3695 current->PID 3695 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd80 index=8 myindex->call_task=3692 f5d1421c PID 3692 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdd80 index=8 call_task->PID 3692 f5d1421c current->PID 3692 f5d1421c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd80 index=8 call_task->PID 3692 current->PID 3692 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd68 index=7 myindex->call_task=3693 f5dd4cbc PID 3693 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdd68 index=7 call_task->PID 3693 f5dd4cbc current->PID 3693 f5dd4cbc In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd68 index=7 call_task->PID 3693 current->PID 3693 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd50 index=6 myindex->call_task=3690 f5d1476c PID 3690 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdd50 index=6 call_task->PID 3690 f5d1476c current->PID 3690 f5d1476c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd50 index=6 call_task->PID 3690 current->PID 3690 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd38 index=5 myindex->call_task=3688 f5c3a76c PID 3688 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdd38 index=5 call_task->PID 3688 f5c3a76c current->PID 3688 f5c3a76c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd38 index=5 call_task->PID 3688 current->PID 3688 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd20 index=4 myindex->call_task=3685 f5cf876c PID 3685 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdd20 index=4 call_task->PID 3685 f5cf876c current->PID 3685 f5cf876c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd20 index=4 call_task->PID 3685 current->PID 3685 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd08 index=3 myindex->call_task=3683 f5d0021c PID 3683 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdd08 index=3 call_task->PID 3683 f5d0021c current->PID 3683 f5d0021c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdd08 index=3 call_task->PID 3683 current->PID 3683 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdcf0 index=2 myindex->call_task=3687 f5c3acbc PID 3687 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdcf0 index=2 call_task->PID 3687 f5c3acbc current->PID 3687 f5c3acbc In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdcf0 index=2 call_task->PID 3687 current->PID 3687 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: wait is about to finish waiting
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdcd8 index=1 myindex->call_task=3686 f5cf821c PID 3686 In WRITE() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fdcd8 index=1 call_task->PID 3686 f5cf821c current->PID 3686 f5cf821c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: usersync: myrespbuf=f83fdcd8 index=1 call_task->PID 3686 current->PID 3686 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:04 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:04 localhost kernel: urrsched: urrsched begin firstCall logic PID 3691 
-Nov  2 22:58:04 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:04 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:04 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:04 localhost kernel: urrsched: urr_task_tick PID 3691 with weight 4 timeslice 40 RUNtime 43754457 ACTUALtime 320016007945 tick_count 44
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3689 with weight 1 timeslice 10 RUNtime 46232961 ACTUALtime 320063010087 tick_count 47
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3682 with weight 6 timeslice 60 RUNtime 46079661 ACTUALtime 320110036613 tick_count 47
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3684 with weight 10 timeslice 100 RUNtime 45514791 ACTUALtime 320156008158 tick_count 46
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3680 with weight 9 timeslice 90 RUNtime 46070682 ACTUALtime 320203071729 tick_count 47
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3681 with weight 7 timeslice 70 RUNtime 45481744 ACTUALtime 320249007820 tick_count 46
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3679 with weight 2 timeslice 20 RUNtime 42977484 ACTUALtime 320293007877 tick_count 43
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3678 with weight 8 timeslice 80 RUNtime 45670420 ACTUALtime 320340008226 tick_count 46
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3674 with weight 3 timeslice 30 RUNtime 45183546 ACTUALtime 320386007826 tick_count 46
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3677 with weight 50 timeslice 500 RUNtime 45678371 ACTUALtime 320433007714 tick_count 46
-Nov  2 22:58:05 localhost kernel: urrsched: HZ == 1000 
-Nov  2 22:58:05 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  2 22:58:05 localhost kernel: urrsched: urr_task_tick PID 3676 with weight 100 timeslice 1000 RUNtime 44189013 ACTUALtime 320478008021 tick_count 45
-Nov  2 22:58:05 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83fddf8 index=13 call_task->PID 3699 c178521c current->PID 3699 c178521c In read() myrespbuf->respbuf == 0
-Nov  2 22:58:06 localhost kernel: usersync: myrespbuf=f83fddf8 index=13 call_task->PID 3699 current->PID 3699 In read() myrespbuf->respbuf == 0
-Nov  2 22:58:06 localhost kernel: urrsched: urr_task_tick PID 3702 with weight 5 timeslice 100 RUNtime 45197372 ACTUALtime 320524007909 tick_count 46
+Nov  2 22:58:57 localhost kernel: urrsched: created new debugfs directory and file
+Nov  2 22:59:02 localhost kernel: usersync: created new debugfs directory and file
+Nov  2 22:59:07 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464cc0 index=0 call_task->PID 4642 f5c3776c current->PID 4642 f5c3776c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:09 localhost kernel: usersync: myrespbuf=f8464cc0 index=0 call_task->PID 4642 current->PID 4642 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:09 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:09 localhost kernel: usersync: prepare to wait non-exclusively
+Nov  2 22:59:24 localhost kernel: usersync: wait is preparing to schedule
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464de0 index=12 myindex->call_task=4680 f5d6a21c PID 4680 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464de0 index=12 call_task->PID 4680 f5d6a21c current->PID 4680 f5d6a21c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464de0 index=12 call_task->PID 4680 current->PID 4680 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464dc8 index=11 myindex->call_task=4678 f5d6acbc PID 4678 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464dc8 index=11 call_task->PID 4678 f5d6acbc current->PID 4678 f5d6acbc In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464dc8 index=11 call_task->PID 4678 current->PID 4678 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464db0 index=10 myindex->call_task=4679 f5d6a76c PID 4679 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464db0 index=10 call_task->PID 4679 f5d6a76c current->PID 4679 f5d6a76c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464db0 index=10 call_task->PID 4679 current->PID 4679 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d98 index=9 myindex->call_task=4675 f5d37cbc PID 4675 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464d98 index=9 call_task->PID 4675 f5d37cbc current->PID 4675 f5d37cbc In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d98 index=9 call_task->PID 4675 current->PID 4675 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d80 index=8 myindex->call_task=4674 f5ce621c PID 4674 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464d80 index=8 call_task->PID 4674 f5ce621c current->PID 4674 f5ce621c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d80 index=8 call_task->PID 4674 current->PID 4674 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d68 index=7 myindex->call_task=4677 f5d3721c PID 4677 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464d68 index=7 call_task->PID 4677 f5d3721c current->PID 4677 f5d3721c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d68 index=7 call_task->PID 4677 current->PID 4677 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d50 index=6 myindex->call_task=4676 f5d3776c PID 4676 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464d50 index=6 call_task->PID 4676 f5d3776c current->PID 4676 f5d3776c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d50 index=6 call_task->PID 4676 current->PID 4676 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d38 index=5 myindex->call_task=4672 f5ce6cbc PID 4672 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464d38 index=5 call_task->PID 4672 f5ce6cbc current->PID 4672 f5ce6cbc In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d38 index=5 call_task->PID 4672 current->PID 4672 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d20 index=4 myindex->call_task=4669 f5cdc76c PID 4669 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464d20 index=4 call_task->PID 4669 f5cdc76c current->PID 4669 f5cdc76c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d20 index=4 call_task->PID 4669 current->PID 4669 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d08 index=3 myindex->call_task=4668 f5cdccbc PID 4668 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464d08 index=3 call_task->PID 4668 f5cdccbc current->PID 4668 f5cdccbc In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464d08 index=3 call_task->PID 4668 current->PID 4668 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464cf0 index=2 myindex->call_task=4667 f5d0121c PID 4667 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464cf0 index=2 call_task->PID 4667 f5d0121c current->PID 4667 f5d0121c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464cf0 index=2 call_task->PID 4667 current->PID 4667 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: wait is about to finish waiting
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464cd8 index=1 myindex->call_task=4666 f5d0176c PID 4666 In WRITE() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464cd8 index=1 call_task->PID 4666 f5d0176c current->PID 4666 f5d0176c In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: usersync: myrespbuf=f8464cd8 index=1 call_task->PID 4666 current->PID 4666 In read() myrespbuf->respbuf == 0
+Nov  2 22:59:24 localhost kernel: urrsched: HZ == 1000 
+Nov  2 22:59:24 localhost kernel: urrsched: urrsched begin firstCall logic PID 4673 
+Nov  2 22:59:24 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 22:59:24 localhost kernel: urrsched: HZ == 1000 
+Nov  2 22:59:24 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 22:59:24 localhost kernel: urrsched: urr_task_tick PID 4673 with weight 10 timeslice 100 RUNtime 4581547983 ACTUALtime 395618008076 tick_count 4582
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4671 with weight 1 timeslice 10 RUNtime 4582089833 ACTUALtime 400201064107 tick_count 4583
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4670 with weight 4 timeslice 40 RUNtime 4381085462 ACTUALtime 404583007920 tick_count 4382
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4662 with weight 6 timeslice 60 RUNtime 4381643444 ACTUALtime 408966007819 tick_count 4382
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4663 with weight 9 timeslice 90 RUNtime 4581729530 ACTUALtime 413549019574 tick_count 4582
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4664 with weight 7 timeslice 70 RUNtime 4581558664 ACTUALtime 418131008160 tick_count 4582
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4665 with weight 2 timeslice 20 RUNtime 4582195375 ACTUALtime 422714012918 tick_count 4583
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4661 with weight 8 timeslice 80 RUNtime 4581580747 ACTUALtime 427296008178 tick_count 4582
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4658 with weight 50 timeslice 500 RUNtime 4581305801 ACTUALtime 431878007919 tick_count 4582
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4657 with weight 3 timeslice 30 RUNtime 4581086616 ACTUALtime 436460007927 tick_count 4582
+Nov  2 23:00:10 localhost kernel: urrsched: HZ == 1000 
+Nov  2 23:00:10 localhost kernel: urrsched: call sched_uwrr will return 0
+Nov  2 23:00:10 localhost kernel: urrsched: urr_task_tick PID 4660 with weight 5 timeslice 50 RUNtime 4581705015 ACTUALtime 441043015095 tick_count 4582
+Nov  2 23:00:10 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f8464df8 index=13 call_task->PID 4682 f5daf21c current->PID 4682 f5daf21c In read() myrespbuf->respbuf == 0
+Nov  2 23:00:11 localhost kernel: usersync: myrespbuf=f8464df8 index=13 call_task->PID 4682 current->PID 4682 In read() myrespbuf->respbuf == 0
+Nov  2 23:00:11 localhost kernel: urrsched: urr_task_tick PID 4687 with weight 100 timeslice 100 RUNtime 4581330493 ACTUALtime 445625007963 tick_count 4582
