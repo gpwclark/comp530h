@@ -78,7 +78,7 @@ int main (int argc, char* argv[])
     while(1){
         time_t now = time(0);
         double seconds = difftime(now, start);
-        if(seconds > 60)
+        if(seconds > 10)
             break;
     }
 	close (fp);

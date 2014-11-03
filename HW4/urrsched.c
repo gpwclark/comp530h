@@ -61,15 +61,15 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
         return;
     if(lastPSInfo != NULL && lastPSInfo != mySchedInfo){
         print_last_ps_info();
-        //lastPSInfo->p->rt.time_slice = lastPSInfo->weight * TENMS;
+        lastPSInfo->p->rt.time_slice = lastPSInfo->weight * TENMS;
     }
 
     lastPSInfo = mySchedInfo;
     mySchedInfo->tick_count += 1;
 
-    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
-    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
 
     mySchedInfo->last_time = ktime_get();//get a new time
     return;
@@ -171,7 +171,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
     call_task_info->start = ktime_get();
     call_task_info->tick_count = 0;
     call_task_info->p = current;
-    //call_task_info->p->rt.time_slice = call_task_info->weight * TENMS;
+    call_task_info->p->rt.time_slice = call_task_info->weight * TENMS;
     list_add (&(call_task_info->mylist), &ps_info_list);
     ///Here we set the call task to use our new sched class
     call_task->sched_class = user_rr_sched_class;
