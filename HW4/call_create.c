@@ -23,6 +23,7 @@ int main (int argc, char* argv[])
 {
 	int i;
 	int rc = 0;
+	int my_pid = getpid();
 
 	/* Open the file */
 
@@ -36,7 +37,6 @@ int main (int argc, char* argv[])
 		exit (-1);
 	}
 
-	int my_pid = getpid();
     char* argS = malloc(sizeof(char) * MAX_CALL);
 	i = 1;
 	while(1){
