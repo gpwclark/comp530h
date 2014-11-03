@@ -47,25 +47,29 @@ unsigned int (* get_rr_interval_orig) (struct rq *, struct task_struct *);
 static void (* task_tick_orig) (struct rq *, struct task_struct *, int);
 
 urrsched_ps_t *lastPSInfo = NULL;
+static void print_last_ps_info(){
+    s64 actual_time = ktime_to_ns(lastPSInfo->last_time);
+    s64 run_time = ktime_to_ns(ktime_sub(lastPSInfo->last_time, lastPSInfo->start));
+    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i timeslice %i RUNtime %lld ACTUALtime %lld tick_count %i\n", lastPSInfo->p->pid, lastPSInfo->weight, lastPSInfo->p->rt.time_slice, (long long) run_time, (long long)actual_time, lastPSInfo->tick_count );
+    return;
+}
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
     if(lastPSInfo != NULL && lastPSInfo != mySchedInfo){
-        lastPSInfo->p->rt.time_slice = mySchedInfo->weight * TENMS;
+        print_last_ps_info();
     }
+
     lastPSInfo = mySchedInfo;
     mySchedInfo->tick_count += 1;
 
-    //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
-    //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
 
     mySchedInfo->last_time = ktime_get();//get a new time
-    s64 actual_time = ktime_to_ns(mySchedInfo->last_time);
-    s64 run_time = ktime_to_ns(ktime_sub(mySchedInfo->last_time, mySchedInfo->start));
-    printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i timeslice %i RUNtime %lld ACTUALtime %lld tick_count %i\n", p->pid, mySchedInfo->weight, p->rt.time_slice, (long long) run_time, (long long)actual_time, mySchedInfo->tick_count );
     return;
 }
 
@@ -266,6 +270,7 @@ static int __init urrsched_module_init(void)
 
 static void __exit urrsched_module_exit(void)
 {
+    print_last_ps_info();
 	debugfs_remove(file);
 	debugfs_remove(dir);
 	if (respbuf != NULL)
