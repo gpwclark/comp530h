@@ -27,3 +27,5 @@ sleep 5
 echo Prepare to release waiters
 echo
 ../HW3/call_create event_signal 0 
+sleep 1
+sudo rmmod urrsched
