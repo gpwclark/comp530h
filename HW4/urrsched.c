@@ -61,15 +61,15 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
         return;
     if(lastPSInfo != NULL && lastPSInfo != mySchedInfo){
         print_last_ps_info();
-        lastPSInfo->p->rt.time_slice = lastPSInfo->weight * TENMS;
+        //lastPSInfo->p->rt.time_slice = lastPSInfo->weight * TENMS;
     }
 
     lastPSInfo = mySchedInfo;
     mySchedInfo->tick_count += 1;
 
-    //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
-    //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
 
     mySchedInfo->last_time = ktime_get();//get a new time
     return;
