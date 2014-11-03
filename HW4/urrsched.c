@@ -78,8 +78,9 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
     printk(KERN_DEBUG "urrsched: urr_get_rr_interval for PID %i \n", task->pid);
     int rval = get_rr_interval_orig(rq, task);
-    //urrsched_ps_t *mySchedInfo = get_ps_info(task->pid);
-    //int rval = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    urrsched_ps_t *mySchedInfo = get_ps_info(task->pid);
+    if(mySchedInfo != NULL)
+        rval = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     return rval;
 }
 
