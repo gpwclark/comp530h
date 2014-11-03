@@ -52,7 +52,7 @@ static void print_last_ps_info(void){
     s64 actual_time = ktime_to_ns(lastPSInfo->last_time);
     s64 run_time = ktime_to_ns(ktime_sub(lastPSInfo->last_time, lastPSInfo->start));
     printk(KERN_DEBUG "urrsched: urr_task_tick PID %i with weight %i timeslice %i RUNtime %lld ACTUALtime %lld tick_count %i\n", lastPSInfo->p->pid, lastPSInfo->weight, lastPSInfo->p->rt.time_slice, (long long) run_time, (long long)actual_time, lastPSInfo->tick_count );
-    return 0;
+    return;
 }
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
