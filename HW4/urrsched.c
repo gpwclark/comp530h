@@ -61,7 +61,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
         return;
     if(lastPSInfo != NULL && lastPSInfo != mySchedInfo){
         print_last_ps_info();
-        //lastPSInfo->p->rt.time_slice = lastPSInfo->weight * TENMS;
+        lastPSInfo->p->rt.time_slice = lastPSInfo->weight * TENMS;
     }
 
     lastPSInfo = mySchedInfo;
@@ -69,7 +69,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
 
     //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     task_tick_orig(rq, p, queued);
-    p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
 
     mySchedInfo->last_time = ktime_get();//get a new time
     return;
@@ -77,9 +77,9 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
 
 unsigned int urr_get_rr_interval(struct rq *rq, struct task_struct *task){
     printk(KERN_DEBUG "urrsched: urr_get_rr_interval for PID %i \n", task->pid);
-    //int rval = get_rr_interval_orig(rq, task);
-    urrsched_ps_t *mySchedInfo = get_ps_info(task->pid);
-    int rval = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
+    int rval = get_rr_interval_orig(rq, task);
+    //urrsched_ps_t *mySchedInfo = get_ps_info(task->pid);
+    //int rval = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
     return rval;
 }
 
