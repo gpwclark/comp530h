@@ -273,7 +273,8 @@ static int __init urrsched_module_init(void)
 
 static void __exit urrsched_module_exit(void)
 {
-    print_last_ps_info();
+    if(lastPSInfo != NULL)
+        print_last_ps_info();
 	debugfs_remove(file);
 	debugfs_remove(dir);
 	if (respbuf != NULL)
