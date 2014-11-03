@@ -17,10 +17,10 @@ with open('kernel.log', 'r') as csvfile:
 
 #make data into numpy array
 data = np.array(data)
-print('Example input string that we are parsing:')
-print('urr_task_tick PID 3482 with weight 1 timeslice 10 RUNtime 162985252280 ACTUALtime 309785010174 tick_count 16751')
+#print('Example input string that we are parsing:')
+#print('urr_task_tick PID 3482 with weight 1 timeslice 10 RUNtime 162985252280 ACTUALtime 309785010174 tick_count 16751')
 #PID WEIGHT TIMESLICE RUNTIME ACTUALTIME TICK
-print(data[:])
+#print(data[:])
 
 #plot the data
 starttime_ns = data[0][4]
@@ -32,8 +32,8 @@ for line in data:
     x.append( (line[4] - starttime_ns) * (10**-6) ) # the time is added to the x
     y.append(line[0])
 
-print(x)
-print(y)
+#print(x)
+#print(y)
 x = np.array(x)
 y = np.array(y)
 plt.plot(x, y, 'ro')
