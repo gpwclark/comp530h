@@ -78,7 +78,6 @@ int main (int argc, char* argv[])
         counter++;
         while(counter == CALLERCYCLES){
             counter2++;
-            sleep(1);
             if(counter2 == CALLERCYCLES)
                 break;
         }
