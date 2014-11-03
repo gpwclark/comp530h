@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
 #include <errno.h>
 #include "urrsched.h" /* used by both kernel module and user program */
 
@@ -73,11 +74,11 @@ int main (int argc, char* argv[])
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //For testing busy wait
-    long long counter = 0;
-    while(childPID){
-        counter++;
-        if(counter ==  CALLERCYCLESL)
-            printf("counter == %lld", counter);
+    time_t start = time(0);
+    while(1){
+        time_t now = time(0);
+        double seconds = difftime(now, start);
+        if(seconds > 60)
             break;
     }
 	close (fp);
