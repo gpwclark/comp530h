@@ -72,7 +72,6 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
 
     mySchedInfo->last_time = ktime_get();//get a new time
-    schedule();
     return;
 }
 
