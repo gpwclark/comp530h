@@ -36,7 +36,6 @@ int main (int argc, char* argv[])
 		exit (-1);
 	}
 
-    printf("CALLERCYCLESL %llu\n", CALLERCYCLESL);
 	int my_pid = getpid();
     char* argS = malloc(sizeof(char) * MAX_CALL);
 	i = 1;
