@@ -59,6 +59,7 @@ int main (int argc, char* argv[])
         "0",
         (char *) NULL,
     };
+    printf("CALLERCYCLESL %llu", CALLERCYCLESL);
     childPID = fork(); //fork and get the child_PID
     int status = 0;
     if(childPID){//This is the Parent
@@ -72,7 +73,7 @@ int main (int argc, char* argv[])
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //For testing busy wait
-    long long int counter = 0;
+    long long unsigned int counter = 0;
     while(ereturn != -1){
         counter++;
         if(counter > CALLERCYCLESL)
