@@ -73,9 +73,15 @@ int main (int argc, char* argv[])
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     //For testing busy wait
     long long int counter = 0;
+    long long int counter2 = 0;
     while(ereturn != -1){
         counter++;
-        if(counter == CALLERCYCLES)
+        while(counter == CALLERCYCLES){
+            counter2++;
+            if(counter2 == CALLERCYCLES)
+                break;
+        }
+        if(counter > CALLERCYCLES)
             break;
     }
 	close (fp);
