@@ -171,7 +171,7 @@ static ssize_t urrsched_call(struct file *file, const char __user *buf, size_t c
     call_task_info->start = ktime_get();
     call_task_info->tick_count = 0;
     call_task_info->p = current;
-    call_task_info->p->rt.time_slice = call_task_info->weight * TENMS;
+    //call_task_info->p->rt.time_slice = call_task_info->weight * TENMS;
     list_add (&(call_task_info->mylist), &ps_info_list);
     ///Here we set the call task to use our new sched class
     call_task->sched_class = user_rr_sched_class;
