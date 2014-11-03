@@ -56,6 +56,7 @@ static void print_last_ps_info(void){
 }
 
 static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
+    preempt_disable();
     urrsched_ps_t *mySchedInfo = get_ps_info(p->pid);
     if(mySchedInfo == NULL)
         return;
@@ -72,6 +73,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
     //p->rt.time_slice = mySchedInfo->weight * TENMS;//Reset timeslice to weighted
 
     mySchedInfo->last_time = ktime_get();//get a new time
+    preempt_enable();
     return;
 }
 
