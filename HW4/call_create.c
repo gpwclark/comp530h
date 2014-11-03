@@ -75,7 +75,7 @@ int main (int argc, char* argv[])
     long long int counter = 0;
     while(ereturn != -1){
         counter++;
-        if(counter > CALLERCYCLES*CALLERCYCLES)
+        if(counter > CALLERCYCLESL*CALLERCYCLESL)
             printf("counter == %lld", counter);
             break;
     }
