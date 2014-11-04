@@ -74,7 +74,7 @@ static void urr_task_tick(struct rq *rq, struct task_struct *p, int queued){
 
     mySchedInfo->last_time = ktime_get();//get a new time
     //preempt_enable();
-    print_last_ps_info();
+    //print_last_ps_info();
     return;
 }
 
