@@ -10,7 +10,7 @@
 #define MAX_URR_PS 1000
 #define TENMS ( (10 * HZ ) / 1000)
 //#define CALLERCYCLESL ((unsigned long long int) 100000000)
-#define CALLERCYCLESL 500000
+#define CALLERCYCLESL 50000000
 char dir_name[] = "urrsched";
 char file_name[] = "call";
 
