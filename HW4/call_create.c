@@ -20,7 +20,7 @@ char resp_buf_usersync[MAX_RESP];  /* assumes no bufferline is longer */
 
 void do_syscall_usersync(char *call_string);
 
-void main_usersync(int argc, char* argv[])
+void main_usersync()
 {
 	int i;
 	int rc = 0;
