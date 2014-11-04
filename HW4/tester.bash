@@ -1,9 +1,6 @@
 #!/bin/bash
 echo Make sure everything is newly compiled and inserted
 ./insertnew.bash
-cd ../HW3
-./insertnew.bash
-cd ../HW4
 echo
 echo
 echo Prepart to create event and start data collecting:
@@ -25,6 +22,6 @@ sudo ./call_create sched_uwrr 1 &
 sleep 1
 echo Prepare to release waiters
 echo
-../HW3/call_create event_signal 0 
+call_create_HW3 event_signal 0 
 sleep 1
 sudo rmmod urrsched
