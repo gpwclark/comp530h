@@ -46,7 +46,6 @@ Nov  4 15:52:47 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83a6cb0 inde
 Nov  4 15:52:47 localhost kernel: usersync: myrespbuf=f83a6cb0 index=170 call_task->PID 15502 current->PID 15502 In read() myrespbuf->respbuf == 0
 Nov  4 15:52:47 localhost kernel: urrsched: HZ == 1000 
 Nov  4 15:52:47 localhost kernel: urrsched: call sched_uwrr will return 0
-Nov  4 15:52:47 localhost kernel: urrsched: urr_task_tick PID 15502 with weight 7 timeslice 69 RUNtime 15866 ACTUALtime 88118984012023 tick_count 1 STARTtime 88118983996157
 Nov  4 15:52:47 localhost kernel: usersync: wait is about to finish waiting
 Nov  4 15:52:47 localhost kernel: usersync: myrespbuf=f83a6c98 index=169 myindex->call_task=15503 c1bbacbc PID 15503 In WRITE() myrespbuf->respbuf == 0
 Nov  4 15:52:47 localhost kernel: usersync: FOUNDRESPBUF myrespbuf=f83a6c98 index=169 call_task->PID 15503 c1bbacbc current->PID 15503 c1bbacbc In read() myrespbuf->respbuf == 0

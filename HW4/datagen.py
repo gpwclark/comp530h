@@ -22,18 +22,19 @@ data = np.array(data)
 
 #plot the data
 starttime_ns = data[0][4]
+print(data[1][4] - starttime_ns)
 x = []
 y = []
 xlabels = ['Time']
 #data = np.sort(data, axis=0)
 
-print(data)
+#print(data)
 for line in data:
     x.append( (line[4] - starttime_ns) * (10**-6) ) # the time is added to the x
     y.append(line[1])
 
-print(x[0])
-print(y[0])
+#print(x[0])
+#print(y[0])
 x = np.array(x)
 y = np.array(y)
 plt.plot(x, y, 'ro')
