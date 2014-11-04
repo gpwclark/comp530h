@@ -30,7 +30,7 @@ xlabels = ['Time']
 print(data)
 for line in data:
     x.append( (line[4] - starttime_ns) * (10**-6) ) # the time is added to the x
-    y.append(line[1] - lowestPID)
+    y.append(line[1])
 
 print(x[0])
 print(y[0])
