@@ -39,17 +39,7 @@ void main_usersync(int argc, char* argv[])
 
 	int my_pid = getpid();
 	char* argS = malloc(sizeof(char) * MAX_CALL);
-	i = 1;
-	while(1){
-		if(i < argc){
-			strcat(argS, argv[i]);
-		}
-		if(i < argc - 1){
-			strcat(argS, " ");
-		}
-		else{break;}
-		i++;
-	}
+    strcat(argS, "event_wait 0 0");
 	strcat(argS, "\0");
 	//fprintf(stdout, "Strcmp, %i", strcmp("event_create myev", argS) );
 	fprintf(stdout, "Process %d calls usersync with: %s\n",my_pid, argS);
@@ -119,16 +109,7 @@ int main (int argc, char* argv[])
 	}
 	strcat(argS, "\0");
     ///////////////
-    int ereturn = 0;
-    ////we need to wait on the event
-    char *vpargs[] = {
-        "call_create_HW3",
-        "event_wait",
-        "0",
-        "0",
-        (char *) NULL,
-    };
-    main_usersync(4, vpargs);
+    main_usersync();
     //Done waiting so lets make the syscall that we are supposed to
 	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
 	do_syscall(argS);
