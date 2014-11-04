@@ -117,6 +117,7 @@ int main (int argc, char* argv[])
 	fprintf(stdout, "Process %d calls urrsched with: %s\n",my_pid, argS);
 	do_syscall(argS);
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
+    sleep(1); //this is to giva away control briefly
     //For testing busy wait
     time_t start = time(0);
     while(1){
