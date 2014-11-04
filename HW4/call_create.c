@@ -18,6 +18,9 @@ char the_file_usersync[256] = "/sys/kernel/debug/";
 char call_buf_usersync[MAX_CALL];  /* assumes no bufferline is longer */
 char resp_buf_usersync[MAX_RESP];  /* assumes no bufferline is longer */
 
+char dir_name_usersync[] = "usersync";
+char file_name_usersync[] = "call";
+
 void do_syscall_usersync(char *call_string);
 
 void main_usersync()
@@ -27,10 +30,10 @@ void main_usersync()
 
 	/* Open the file */
 
-	strcat(the_file_usersync, dir_name);
+	strcat(the_file_usersync, dir_name_usersync);
 	//fprintf(stdout, "dir_name %s\n", dir_name);
 	strcat(the_file_usersync, "/");
-	strcat(the_file_usersync, file_name);
+	strcat(the_file_usersync, file_name_usersync);
 	//fprintf(stdout, "file_name %s\n", file_name);
 	if ((fp_usersync = open (the_file_usersync, O_RDWR)) == -1) {
 		fprintf (stderr, "error opening %s\n", the_file_usersync);
