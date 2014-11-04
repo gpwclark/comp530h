@@ -119,12 +119,18 @@ int main (int argc, char* argv[])
 	fprintf(stdout, "Module urrsched returns %s to PID %d\n", resp_buf, my_pid);
     sleep(1); //this is to giva away control briefly
     //For testing busy wait
-    time_t start = time(0);
+    //time_t start = time(0);
+    //while(1){
+    //    time_t now = time(0);
+    //    double seconds = difftime(now, start);
+    //    if(seconds > 1)
+    //        break;
+    //}
+    int counter = 0;
     while(1){
-        time_t now = time(0);
-        double seconds = difftime(now, start);
-        if(seconds > 1)
+        if(counter > CALLERCYCLESL)
             break;
+        counter++;
     }
 	close (fp);
 	free(argS);
