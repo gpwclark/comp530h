@@ -123,7 +123,7 @@ int main (int argc, char* argv[])
     while(1){
         time_t now = time(0);
         double seconds = difftime(now, start);
-        if(seconds > 10)
+        if(seconds > 1)
             break;
     }
 	close (fp);
