@@ -93,6 +93,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
     my_vm_ops = kmalloc(sizeof(call_task->mm->mmap->vm_ops), GFP_ATOMIC);
     if(my_vm_ops == NULL){
 		sprintf(respbuf, "Failed, ENOSPC");
+		printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
 		preempt_enable(); 
 		return -ENOSPC;
     }
