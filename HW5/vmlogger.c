@@ -199,8 +199,9 @@ static void __exit vmlogger_module_exit(void)
 {
 	debugfs_remove(file);
 	debugfs_remove(dir);
-	if (respbuf != NULL)
-		kfree(respbuf);
+    if(my_vm_ops != NULL){
+        kfree(my_vm_ops);
+    }
 }
 
 /* Declarations required in building a module */
