@@ -137,7 +137,10 @@ static ssize_t vmlogger_return(struct file *file, char __user *userbuf,
 	strcpy(respbuf, "");//clear respbuff, it is array so do this
 	call_task = NULL;
 
-    kfree(my_vm_ops);
+
+    if(my_vm_ops != NULL){
+        kfree(my_vm_ops);
+    }
     my_vm_ops = NULL;
 
 	preempt_enable();
