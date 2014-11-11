@@ -27,6 +27,16 @@ int file_value;
 struct dentry *dir, *file;
 
 struct vm_operations_struct *my_vm_ops = NULL;
+int (* old_fault)(struct vm_area_struct *vma, struct vm_fault *vmf); // function pointer to a fault handler -- to use in wrapper function
+
+int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
+    int rval = -1;
+    if(old_fault != NULL){
+        rval = old_fault(vma, vmf);
+    }
+    return rval;
+
+}
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
  * the requested function and preparing a response.
@@ -87,8 +97,10 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 		return -ENOSPC;
     }
     memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(call_task->mm->mmap->vm_ops));
-
 	printk(KERN_DEBUG "vmlogger: memcpy to my_vm_ops at %p", &my_vm_ops);
+    old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
+    my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
+    call_task->mm->mmap->vm_ops = my_vm_ops;
 	/* Use kernel functions for access to pid for a process 
 	*/
 
