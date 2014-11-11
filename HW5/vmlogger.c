@@ -72,21 +72,23 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 	callbuf[MAX_CALL - 1] = '\0'; /* make sure it is a valid string */
 
 	if (strcmp(callbuf, "vmlogger") != 0) {
-		strcpy(respbuf, "Failed: invalid operation\n");
+		sprintf(respbuf, "Failed invalid call");
 		printk(KERN_DEBUG "vmlogger: call %s will return %s\n", callbuf, respbuf);
 		preempt_enable();
 		return count;  /* write() calls return the number of bytes written */
 	}
 
-	sprintf(respbuf, "Success:\n");
+	sprintf(respbuf, "0");
     //Save some of our mm info
     my_vm_ops = kmalloc(sizeof(call_task->mm->mmap->vm_ops), GFP_ATOMIC);
     if(my_vm_ops == NULL){
+		sprintf(respbuf, "Failed, ENOSPC");
 		preempt_enable(); 
 		return -ENOSPC;
     }
     memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(call_task->mm->mmap->vm_ops));
 
+	printk(KERN_DEBUG "vmlogger: memcpy to my_vm_ops at %p", &my_vm_ops);
 	/* Use kernel functions for access to pid for a process 
 	*/
 
@@ -96,6 +98,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 	 */
 
 
+    sprintf(respbuf, "Success");
 	printk(KERN_DEBUG "vmlogger: call %s will return %s", callbuf, respbuf);
 	preempt_enable();
 
