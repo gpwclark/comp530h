@@ -31,6 +31,7 @@ int (* old_fault)(struct vm_area_struct *vma, struct vm_fault *vmf); // function
 
 int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
     int rval = 0;
+    printk(KERN_DEBUG "vmlogger: calling my_fault");
     if(old_fault != NULL){
         rval = old_fault(vma, vmf);
     }
@@ -99,14 +100,16 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 		return -ENOSPC;
     }
     //copy the struct
-    memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(call_task->mm->mmap->vm_ops));
-	printk(KERN_DEBUG "vmlogger: memcpy to my_vm_ops at %p", &my_vm_ops);
-    old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
-    printk(KERN_DEBUG "vmlogger: my_vm_ops->fault before== %p\n", my_vm_ops->fault);
-    my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
-    printk(KERN_DEBUG "vmlogger: my_vm_ops->fault == %p\n", my_vm_ops->fault);
-    if(my_vm_ops != NULL){
-        //call_task->mm->mmap->vm_ops = my_vm_ops;
+    if(call_task->mm->mmap->vm_ops != NULL){
+        memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(call_task->mm->mmap->vm_ops));
+        printk(KERN_DEBUG "vmlogger: memcpy to my_vm_ops at %p", &my_vm_ops);
+        old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
+        printk(KERN_DEBUG "vmlogger: old_fault== %p\n", old_fault);
+        printk(KERN_DEBUG "vmlogger: my_vm_ops->fault before== %p\n", my_vm_ops->fault);
+        if(old_fault != NULL)
+            my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
+        printk(KERN_DEBUG "vmlogger: my_vm_ops->fault == %p\n", my_vm_ops->fault);
+        call_task->mm->mmap->vm_ops = my_vm_ops;
     }
 	/* Use kernel functions for access to pid for a process 
 	*/
