@@ -27,14 +27,12 @@ int file_value;
 struct dentry *dir, *file;
 
 struct vm_operations_struct *my_vm_ops = NULL;
-int (* old_fault)(struct vm_area_struct *vma, struct vm_fault *vmf); // function pointer to a fault handler -- to use in wrapper function
+static int (* old_fault)(struct vm_area_struct *vma, struct vm_fault *vmf); // function pointer to a fault handler -- to use in wrapper function
 
-int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
+static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
     int rval = 0;
     printk(KERN_DEBUG "vmlogger: calling my_fault");
-    if(old_fault != NULL){
-        rval = old_fault(vma, vmf);
-    }
+    rval = old_fault(vma, vmf);
     return rval;
 
 }
@@ -109,7 +107,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
         if(old_fault != NULL)
             my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
         printk(KERN_DEBUG "vmlogger: my_vm_ops->fault == %p\n", my_vm_ops->fault);
-        call_task->mm->mmap->vm_ops = my_vm_ops;
+        //call_task->mm->mmap->vm_ops = my_vm_ops;
     }
 	/* Use kernel functions for access to pid for a process 
 	*/
