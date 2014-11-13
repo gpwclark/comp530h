@@ -109,7 +109,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
         if(old_fault != NULL)
             my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
         printk(KERN_DEBUG "vmlogger: my_vm_ops->fault == %p\n", my_vm_ops->fault);
-        //call_task->mm->mmap->vm_ops = my_vm_ops;
+        call_task->mm->mmap->vm_ops = my_vm_ops;
     }
 	/* Use kernel functions for access to pid for a process 
 	*/
@@ -161,8 +161,6 @@ static ssize_t vmlogger_return(struct file *file, char __user *userbuf,
 
 	strcpy(respbuf, "");//clear respbuff, it is array so do this
 	call_task = NULL;
-
-    my_vm_ops = NULL;
 
 	preempt_enable();
 
