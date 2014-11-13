@@ -90,7 +90,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 	sprintf(respbuf, "0");
     //Save some of our mm info
 
-    my_vm_ops = kmalloc(sizeof(call_task->mm->mmap->vm_ops), GFP_ATOMIC);
+    my_vm_ops = kmalloc(sizeof(*call_task->mm->mmap->vm_ops), GFP_ATOMIC);
     if(my_vm_ops == NULL){
 		sprintf(respbuf, "Failed, ENOSPC");
 		printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
@@ -99,14 +99,10 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
     }
     //copy the struct
     if(call_task->mm->mmap->vm_ops != NULL){
-        memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(call_task->mm->mmap->vm_ops));
-        printk(KERN_DEBUG "vmlogger: memcpy to my_vm_ops at %p", &my_vm_ops);
+        memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(*call_task->mm->mmap->vm_ops));
         old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
-        printk(KERN_DEBUG "vmlogger: old_fault== %p\n", &old_fault);
-        printk(KERN_DEBUG "vmlogger: my_vm_ops->fault before== %p\n", &my_vm_ops->fault);
         //if(old_fault != NULL)
             //my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
-        printk(KERN_DEBUG "vmlogger: my_vm_ops->fault == %p\n", &my_vm_ops->fault);
         call_task->mm->mmap->vm_ops = my_vm_ops;
     }
 	/* Use kernel functions for access to pid for a process 
@@ -135,7 +131,7 @@ static ssize_t vmlogger_return(struct file *file, char __user *userbuf,
 {
 	int rc; 
 
-	//preempt_disable();
+	preempt_disable();
 
 	if (current != call_task) {
 		preempt_enable();
