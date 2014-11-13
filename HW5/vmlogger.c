@@ -27,7 +27,8 @@ int file_value;
 struct dentry *dir, *file;
 
 struct vm_operations_struct *my_vm_ops = NULL;
-int (* old_fault)(struct vm_area_struct *vma, struct vm_fault *vmf); // function pointer to a fault handler -- to use in wrapper function
+struct vm_operations_struct *old_vm_ops = NULL;
+//int (* old_fault)(struct vm_area_struct *vma, struct vm_fault *vmf); // function pointer to a fault handler -- to use in wrapper function
 
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
     int rval = 0;
@@ -100,7 +101,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
     //copy the struct
     if(call_task->mm->mmap->vm_ops != NULL){
         memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(*(call_task->mm->mmap->vm_ops)) );
-        //old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
+        old_vm_ops = call_task->mm->mmap->vm_ops; //make pointer to orig function so we can call it later
         //if(old_fault != NULL)
             //my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
         call_task->mm->mmap->vm_ops = my_vm_ops;
