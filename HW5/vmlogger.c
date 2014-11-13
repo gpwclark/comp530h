@@ -102,8 +102,8 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
         memcpy(my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(struct vm_operations_struct) );
         old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
         printk(KERN_DEBUG "vmlogger: old_vm_ops %p %u", call_task->mm->mmap->vm_ops, sizeof(struct vm_operations_struct) );
-        //if(old_fault != NULL)
-            //my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
+        if(old_fault != NULL)
+            my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
         call_task->mm->mmap->vm_ops = my_vm_ops;
         printk(KERN_DEBUG "vmlogger: my_vm_ops %p %u", my_vm_ops, sizeof(struct vm_operations_struct) );
     }
