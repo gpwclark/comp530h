@@ -248,7 +248,7 @@ static void __exit vmlogger_module_exit(void)
         if(this_vma != NULL){//we have found the vma
             
             printk(KERN_DEBUG "vmlogger: freeing vma_info %p\n", this_vma);
-            printk(KERN_DEBUG "    vmlogger: this_vma->myvmalist %p\n", this_vma->myvmalist);
+            printk(KERN_DEBUG "    vmlogger: this_vma->myvmalist %p\n", &this_vma->myvmalist);
             printk(KERN_DEBUG "    vmlogger: this_vma->vma %p\n", this_vma->vma);
             printk(KERN_DEBUG "    vmlogger: this_vma->call_task %p\n", this_vma->call_task);
             printk(KERN_DEBUG "    vmlogger: this_vma->mm %p\n", this_vma->mm);
