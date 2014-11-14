@@ -21,7 +21,7 @@
  */
 
 LIST_HEAD(vmalist);
-struct __vma_my_info{
+typedef struct __vma_my_info{
     struct list_head myvmalist;
     struct vm_area_struct *vma;
     struct task_struct *call_task;
