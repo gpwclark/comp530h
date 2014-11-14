@@ -134,7 +134,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
         call_task->mm->mmap->vm_ops = call_task_vma_my_info->my_vm_ops;
     }
     //Now we can add it to the list
-    list_add ( &call_task_vma_my_info->myvmalist , &vmalist);
+    list_add ( &(call_task_vma_my_info->myvmalist) , &vmalist);
 
 	/* Here the response has been generated and is ready for the user
 	 * program to access it by a read() call.
