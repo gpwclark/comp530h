@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,6 +6,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <fcntl.h>
 
 #include "vmlogger.h" /* used by both kernel module and user program */
@@ -17,7 +17,7 @@ char call_buf[MAX_CALL];  /* assumes no bufferline is longer */
 char resp_buf[MAX_RESP];  /* assumes no bufferline is longer */
 
 void do_syscall(char *call_string);
-
+void do_mmap_stuff();
 
 void main (int argc, char* argv[])
 {
@@ -39,8 +39,8 @@ void main (int argc, char* argv[])
   fprintf(stdout, "System call getpid() returns %d\n", my_pid);
 
   do_syscall("vmlogger");
-
   fprintf(stdout, "Module vmlogger returns %s", resp_buf);
+  do_mmap_stuff();
 
   close (fp);
 } /* end main() */
@@ -66,3 +66,28 @@ void do_syscall(char *call_string)
   }
 }
 
+void do_mmap_stuff(){
+    int fdin;
+    unsigned long c = 0;
+    char *src;
+    struct stat statbuf;
+    int i, j;
+    int max_idx;
+    /* open the input file */
+    if ((fdin = open ("BigFile", O_RDONLY)) < 0)
+        errx (-1, "can't open input for reading");
+    /* find size of input file */
+    if (fstat (fdin,&statbuf) < 0)
+        errx (-1,"fstat error");
+    /* mmap the input file */
+    if ((src = mmap (0, statbuf.st_size, PROT_READ, MAP_SHARED, fdin, 0)) == (caddr_t) -1) 
+        errx (-1, "mmap error for input");
+        /* read at random from mapped file, compute a “checksum” */
+    fprintf(stdout, "Reading %d bytes from mapped file\n", statbuf.st_size);
+    max_idx = statbuf.st_size - 2;
+    for (i = 0; i < statbuf.st_size; i++){
+        j = random() % max_idx;
+        c += (*(src+j)) >> 2;
+    }
+    fprintf(stdout, "Read %d bytes, sum %lu\n", i-1, c); 
+}
