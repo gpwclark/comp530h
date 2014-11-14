@@ -105,36 +105,42 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 
 	sprintf(respbuf, "0");
 
-    //Save some of our mm info
-    vma_my_info *call_task_vma_my_info;
-    call_task_vma_my_info = kmalloc(sizeof(vma_my_info), GFP_ATOMIC);
-    if(call_task_vma_my_info == NULL){
-		sprintf(respbuf, "Failed, ENOSPC");
-		printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
-		preempt_enable(); 
-		return -ENOSPC;
+    struct vm_area_struct *vma;
+    vma = call_task_vma_my_info->mm->mmap;
+
+    while(vma){
+        //Save some of our mm info
+        vma_my_info *call_task_vma_my_info;
+        call_task_vma_my_info = kmalloc(sizeof(vma_my_info), GFP_ATOMIC);
+        if(call_task_vma_my_info == NULL){
+            sprintf(respbuf, "Failed, ENOSPC");
+            printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
+            preempt_enable(); 
+            return -ENOSPC;
+        }
+        INIT_LIST_HEAD( &call_task_vma_my_info->myvmalist);
+        //init the struct
+        call_task_vma_my_info->my_vm_ops = kmalloc(sizeof(struct vm_operations_struct), GFP_ATOMIC);
+        if(call_task_vma_my_info->my_vm_ops == NULL){
+            sprintf(respbuf, "Failed, ENOSPC");
+            printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
+            preempt_enable(); 
+            return -ENOSPC;
+        }
+        call_task_vma_my_info->mm = call_task->mm;
+        call_task_vma_my_info->call_task = call_task;
+        call_task_vma_my_info->vma = call_task->mm->mmap;
+        if(call_task->mm->mmap->vm_ops != NULL){
+            memcpy(call_task_vma_my_info->my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(struct vm_operations_struct) );
+            call_task_vma_my_info->old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
+            if(call_task_vma_my_info->old_fault != NULL)
+                call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
+            call_task->mm->mmap->vm_ops = call_task_vma_my_info->my_vm_ops;
+        }
+        //Now we can add it to the list
+        list_add ( &(call_task_vma_my_info->myvmalist) , &vmalist);
+        vma = vma->vm_next;
     }
-    INIT_LIST_HEAD( &call_task_vma_my_info->myvmalist);
-    //init the struct
-    call_task_vma_my_info->my_vm_ops = kmalloc(sizeof(struct vm_operations_struct), GFP_ATOMIC);
-    if(call_task_vma_my_info->my_vm_ops == NULL){
-		sprintf(respbuf, "Failed, ENOSPC");
-		printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
-		preempt_enable(); 
-		return -ENOSPC;
-    }
-    call_task_vma_my_info->mm = call_task->mm;
-    call_task_vma_my_info->call_task = call_task;
-    call_task_vma_my_info->vma = call_task->mm->mmap;
-    if(call_task->mm->mmap->vm_ops != NULL){
-        memcpy(call_task_vma_my_info->my_vm_ops ,&call_task->mm->mmap->vm_ops, sizeof(struct vm_operations_struct) );
-        call_task_vma_my_info->old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
-        if(call_task_vma_my_info->old_fault != NULL)
-            call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
-        call_task->mm->mmap->vm_ops = call_task_vma_my_info->my_vm_ops;
-    }
-    //Now we can add it to the list
-    list_add ( &(call_task_vma_my_info->myvmalist) , &vmalist);
 
 	/* Here the response has been generated and is ready for the user
 	 * program to access it by a read() call.
