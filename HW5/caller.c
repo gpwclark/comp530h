@@ -82,7 +82,7 @@ void do_mmap_stuff(){
     /* mmap the input file */
     if ((src = mmap (0, statbuf.st_size, PROT_READ, MAP_SHARED, fdin, 0)) == (caddr_t) -1) 
         errx (-1, "mmap error for input");
-        /* read at random from mapped file, compute a “checksum” */
+    /* read at random from mapped file, compute a “checksum” */
     fprintf(stdout, "Reading %d bytes from mapped file\n", statbuf.st_size);
     max_idx = statbuf.st_size - 2;
     for (i = 0; i < statbuf.st_size; i++){
