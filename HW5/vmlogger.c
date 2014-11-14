@@ -135,7 +135,8 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
             call_task_vma_my_info->old_fault = call_task->mm->mmap->vm_ops->fault; //make pointer to orig function so we can call it later
             if(call_task_vma_my_info->old_fault != NULL)
                 call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
-            call_task->mm->mmap->vm_ops = call_task_vma_my_info->my_vm_ops;
+            //call_task->mm->mmap->vm_ops = call_task_vma_my_info->my_vm_ops;
+
         }
         //Now we can add it to the list
         list_add ( &(call_task_vma_my_info->myvmalist) , &vmalist);
@@ -245,6 +246,8 @@ static void __exit vmlogger_module_exit(void)
     vma_my_info *this_vma = NULL;
     list_for_each_entry(this_vma, &vmalist, myvmalist){
         if(this_vma != NULL){//we have found the vma
+            
+            printk(KERN_DEBUG "vmlogger: freeing vma_info %p\n", this_vma);
             //free it up
             if(this_vma->my_vm_ops != NULL)
                 kfree(this_vma->my_vm_ops);

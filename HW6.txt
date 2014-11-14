@@ -12,3 +12,6 @@ Metric:
 
 Notes:
    relative_fault = (VirtualFaultAddr - StartVirtAddressForVMA) >> 12 
+
+
+Four runs: (Cold and warm) * (each access pattern)
