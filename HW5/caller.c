@@ -38,7 +38,7 @@ void main (int argc, char* argv[])
   int my_pid = getpid();
   fprintf(stdout, "System call getpid() returns %d\n", my_pid);
 
-  do_syscall("vmlogger");
+  do_syscall("vmlogger_start");
   fprintf(stdout, "Module vmlogger returns %s", resp_buf);
   do_mmap_stuff();
 
