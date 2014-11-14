@@ -38,7 +38,7 @@ struct dentry *dir, *file;
 struct vm_operations_struct *my_vm_ops = NULL;
 
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
-    int rval = -ENOSPC;
+    int rval = 10000;
     printk(KERN_DEBUG "vmlogger: calling my_fault");
     vma_my_info *this_vma = NULL;
     list_for_each_entry(this_vma, &vmalist, myvmalist){
@@ -135,7 +135,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
             call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
             if(call_task_vma_my_info->old_fault != NULL)
                 call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
-            vma->vm_ops = call_task_vma_my_info->my_vm_ops;
+            //vma->vm_ops = call_task_vma_my_info->my_vm_ops;
 
         }
         //Now we can add it to the list
