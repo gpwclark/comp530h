@@ -249,8 +249,10 @@ static void __exit vmlogger_module_exit(void)
             
             printk(KERN_DEBUG "vmlogger: freeing vma_info %p\n", this_vma);
             //free it up
-            if(this_vma->my_vm_ops != NULL)
+            if(this_vma->my_vm_ops != NULL){
+                printk(KERN_DEBUG "vmlogger: this_vma->vma %p\n", this_vma->vma);
                 kfree(this_vma->my_vm_ops);
+            }
             else
                 printk(KERN_DEBUG "vmlogger: my_vm_ops = NULL\n");
             kfree(this_vma);
