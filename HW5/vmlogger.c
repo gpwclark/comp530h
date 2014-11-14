@@ -114,7 +114,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 		preempt_enable(); 
 		return -ENOSPC;
     }
-    INIT_LIST_HEAD( &call_task_vma_my_info.myvmalist);
+    INIT_LIST_HEAD( &call_task_vma_my_info->myvmalist);
     //init the struct
     call_task_vma_my_info->my_vm_ops = kmalloc(sizeof(struct vm_operations_struct), GFP_ATOMIC);
     if(call_task_vma_my_info->my_vm_ops == NULL){
