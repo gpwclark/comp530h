@@ -252,7 +252,7 @@ static void __exit vmlogger_module_exit(void)
             printk(KERN_DEBUG "    vmlogger: this_vma->vma %p\n", this_vma->vma);
             printk(KERN_DEBUG "    vmlogger: this_vma->call_task %p\n", this_vma->call_task);
             printk(KERN_DEBUG "    vmlogger: this_vma->mm %p\n", this_vma->mm);
-            printk(KERN_DEBUG "    vmlogger: this_vma->vm_ops %p\n", this_vma->vm_ops);
+            printk(KERN_DEBUG "    vmlogger: this_vma->vm_ops %p\n", this_vma->my_vm_ops);
             printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
             //free it up
             if(this_vma->my_vm_ops != NULL){
