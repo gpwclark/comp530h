@@ -38,11 +38,11 @@ struct dentry *dir, *file;
 struct vm_operations_struct *my_vm_ops = NULL;
 
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
-    int rval = 0;
-    vma_my_info *this_vma = NULL;
+    int rval = -ENOSPC;
     printk(KERN_DEBUG "vmlogger: calling my_fault");
+    vma_my_info *this_vma = NULL;
     list_for_each_entry(this_vma, &vmalist, myvmalist){
-        if(vma == this_vma->vma){//we have found the vma
+        if(vma != NULL && this_vma->vma != NULL && vma == this_vma->vma){//we have found the vma
             //execute the original function
             rval = this_vma->old_fault(vma, vmf);
             break;
@@ -241,9 +241,16 @@ static void __exit vmlogger_module_exit(void)
 {
 	debugfs_remove(file);
 	debugfs_remove(dir);
-    //if(my_vm_ops != NULL){
-    //    kfree(my_vm_ops);
-    //}
+
+    vma_my_info *this_vma = NULL;
+    list_for_each_entry(this_vma, &vmalist, myvmalist){
+        if(this_vma != NULL){//we have found the vma
+            //free it up
+            if(this_vma->my_vm_ops != NULL)
+                kfree(this_vma->my_vm_ops);
+            kfree(this_vma);
+        }
+    }
 }
 
 /* Declarations required in building a module */

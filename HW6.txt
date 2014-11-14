@@ -1,0 +1,14 @@
+Access Patterns:
+    -sequential
+    -random
+    -fixed strides
+
+Warm-Cache / Cold-Cache (Page  cache):
+    -Did we reboot so that the memory caches are cleared or are they still filled
+
+Metric:
+    -Visualization
+        -Access Patern - logical page # v fault number
+
+Notes:
+   relative_fault = (VirtualFaultAddr - StartVirtAddressForVMA) >> 12 
