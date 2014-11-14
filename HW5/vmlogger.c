@@ -106,7 +106,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 	sprintf(respbuf, "0");
 
     struct vm_area_struct *vma;
-    vma = call_task_vma_my_info->mm->mmap;
+    vma = call_task->mm->mmap;
 
     while(vma){
         //Save some of our mm info
