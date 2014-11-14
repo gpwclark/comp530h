@@ -48,7 +48,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
             break;
         }
     }
-    printk(KERN_DEBUG "vmlogger: called my_fault");
+    printk(KERN_DEBUG "vmlogger: called my_fault return %d", rval);
     return rval;
 
 }
