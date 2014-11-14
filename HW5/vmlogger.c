@@ -251,8 +251,14 @@ static void __exit vmlogger_module_exit(void)
             //free it up
             if(this_vma->my_vm_ops != NULL)
                 kfree(this_vma->my_vm_ops);
+            else
+                printk(KERN_DEBUG "vmlogger: my_vm_ops = NULL\n");
             kfree(this_vma);
         }
+        else{
+            printk(KERN_DEBUG "vmlogger: this_vma = NULL\n");
+        }
+
     }
 }
 
