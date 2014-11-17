@@ -50,10 +50,13 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
             printk(KERN_DEBUG "    vmlogger: this_vma->my_vm_ops %p\n", this_vma->my_vm_ops);
             printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
         }
-	    if(vma != NULL && this_vma->vma != NULL 
+	    if(vma != NULL
+                && vmf != NULL 
+                && this_vma->vma != NULL 
                 && vma == this_vma->vma 
                 && this_vma->old_fault != NULL 
-                && this_vma->my_vm_ops != NULL){//we have found the vma
+                && this_vma->my_vm_ops != NULL
+                ){//we have found the vma
 		    //execute the original function
 		    rval = this_vma->old_fault(vma, vmf);
 		    break;
