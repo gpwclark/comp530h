@@ -38,7 +38,7 @@ struct dentry *dir, *file;
 struct vm_operations_struct *my_vm_ops = NULL;
 
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
-    int (* old_fault) = NULL;
+    int (* old_fault) (struct vm_area_struct *vma, struct vm_fault *vmf) = NULL;
     vma_my_info *this_vma;
     list_for_each_entry(this_vma, &vmalist, myvmalist){
         if(this_vma != NULL && this_vma->vma == vma){
@@ -64,7 +64,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
 		    old_fault = this_vma->old_fault;
             printk(KERN_DEBUG "vmlogger: called orig fault function: return %d", rval);
 	    }
-        if(old_fault)
+        if(old_fault != NULL)
             return old_fault(vma, vmf);
         else
             return -1;
