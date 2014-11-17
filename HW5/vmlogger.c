@@ -58,7 +58,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
                 && this_vma->my_vm_ops != NULL
                 ){//we have found the vma
 		    //execute the original function
-		    rval = this_vma->old_fault(vma, &vmf);
+		    rval = this_vma->old_fault(vma, vmf);
 		    break;
 	    }
     }
