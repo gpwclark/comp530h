@@ -60,6 +60,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
                 ){//we have found the vma
 		    //execute the original function
 		    rval = this_vma->old_fault(vma, vmf);
+            printk(KERN_DEBUG "vmlogger: called orig fault function: return %d", rval);
 		    break;
 	    }
     }
