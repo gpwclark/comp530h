@@ -38,7 +38,7 @@ struct dentry *dir, *file;
 struct vm_operations_struct *my_vm_ops = NULL;
 
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
-    int rval = 10000;
+    int rval = 1000;
     printk(KERN_DEBUG "vmlogger: calling my_fault");
     vma_my_info *this_vma = NULL;
     list_for_each_entry(this_vma, &vmalist, myvmalist){
