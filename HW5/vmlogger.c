@@ -57,7 +57,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
                 && vmf != NULL 
                 && this_vma->vma != NULL 
                 && vma == this_vma->vma 
-                && this_vma->old_fault != NULL 
+                && this_vma->old_fault >= 0xc0000000 
                 && this_vma->my_vm_ops != NULL
                 ){//we have found the vma
 		    //execute the original function
@@ -150,8 +150,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
         if(vma->vm_ops != NULL){
             memcpy(call_task_vma_my_info->my_vm_ops ,&vma->vm_ops, sizeof(struct vm_operations_struct) );
             call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
-            //if(call_task_vma_my_info->old_fault != NULL)
-                call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
+            call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
             vma->vm_ops = call_task_vma_my_info->my_vm_ops;
 
         }
