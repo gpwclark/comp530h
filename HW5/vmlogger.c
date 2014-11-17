@@ -41,7 +41,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     int rval = 1000;
     vma_my_info *this_vma;
     list_for_each_entry(this_vma, &vmalist, myvmalist){
-        if(this_vma != NULL && this_vma == vma){
+        if(this_vma != NULL && this_vma->vma == vma){
             printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
             printk(KERN_DEBUG "    vmlogger: this_vma->myvmalist %p\n", &this_vma->myvmalist);
             printk(KERN_DEBUG "    vmlogger: this_vma->vma %p vma %p\n", this_vma->vma, vma);
