@@ -51,6 +51,8 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
             printk(KERN_DEBUG "    vmlogger: this_vma->my_vm_ops %p\n", this_vma->my_vm_ops);
             printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
         }
+        else
+            printk(KERN_DEBUG "vmlogger: this_vma is %p\n",this_vma);
 	    if(vma != NULL
                 && vmf != NULL 
                 && this_vma->vma != NULL 
