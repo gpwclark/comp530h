@@ -164,7 +164,8 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
             }
         }
         //Now we can add it to the list
-        vma = vma->vm_next;
+        //vma = vma->vm_next;
+        break;
     }
 
 	/* Here the response has been generated and is ready for the user
