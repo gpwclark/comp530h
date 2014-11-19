@@ -42,18 +42,18 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     int rval = -1;
     vma_my_info *this_vma;
     list_for_each_entry(this_vma, &vmalist, myvmalist){
-        if(this_vma != NULL && this_vma->vma == vma){
-            printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
-            printk(KERN_DEBUG "vmlogger: DEBUG vma %p vmf %p\n", vma, vmf);
-            printk(KERN_DEBUG "    vmlogger: this_vma->myvmalist %p\n", &this_vma->myvmalist);
-            printk(KERN_DEBUG "    vmlogger: this_vma->vma %p vma %p\n", this_vma->vma, vma);
-            printk(KERN_DEBUG "    vmlogger: this_vma->call_task %p\n", this_vma->call_task);
-            printk(KERN_DEBUG "    vmlogger: this_vma->mm %p\n", this_vma->mm);
-            printk(KERN_DEBUG "    vmlogger: this_vma->my_vm_ops %p\n", this_vma->my_vm_ops);
-            printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
-        }
-        else
-            printk(KERN_DEBUG "vmlogger: this_vma is %p\n",this_vma);
+        //if(this_vma != NULL && this_vma->vma == vma){
+        //    printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
+        //    printk(KERN_DEBUG "vmlogger: DEBUG vma %p vmf %p\n", vma, vmf);
+        //    printk(KERN_DEBUG "    vmlogger: this_vma->myvmalist %p\n", &this_vma->myvmalist);
+        //    printk(KERN_DEBUG "    vmlogger: this_vma->vma %p vma %p\n", this_vma->vma, vma);
+        //    printk(KERN_DEBUG "    vmlogger: this_vma->call_task %p\n", this_vma->call_task);
+        //    printk(KERN_DEBUG "    vmlogger: this_vma->mm %p\n", this_vma->mm);
+        //    printk(KERN_DEBUG "    vmlogger: this_vma->my_vm_ops %p\n", this_vma->my_vm_ops);
+        //    printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
+        //}
+        //else
+        //    printk(KERN_DEBUG "vmlogger: this_vma is %p\n",this_vma);
 	    if(vma != NULL
                 && vmf != NULL 
                 && this_vma->vma != NULL 
@@ -132,36 +132,38 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
     vma = call_task->mm->mmap;
 
     while(vma){
-        //Save some of our mm info
-        vma_my_info *call_task_vma_my_info;
-        call_task_vma_my_info = kmalloc(sizeof(vma_my_info), GFP_ATOMIC);
-        if(call_task_vma_my_info == NULL){
-            sprintf(respbuf, "Failed, ENOSPC");
-            printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
-            preempt_enable(); 
-            return -ENOSPC;
-        }
-        INIT_LIST_HEAD( &call_task_vma_my_info->myvmalist);
-        //init the struct
-        call_task_vma_my_info->my_vm_ops = kmalloc(sizeof(struct vm_operations_struct), GFP_ATOMIC);
-        if(call_task_vma_my_info->my_vm_ops == NULL){
-            sprintf(respbuf, "Failed, ENOSPC");
-            printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
-            preempt_enable(); 
-            return -ENOSPC;
-        }
-        call_task_vma_my_info->mm = call_task->mm;
-        call_task_vma_my_info->call_task = call_task;
-        call_task_vma_my_info->vma = vma;
-        if(vma->vm_ops != NULL){
-            memcpy(call_task_vma_my_info->my_vm_ops ,&vma->vm_ops, sizeof(struct vm_operations_struct) );
-            call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
-            call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
-            vma->vm_ops = call_task_vma_my_info->my_vm_ops;
-
+        
+        if(vma->vm_ops->fault != NULL){
+            //Save some of our mm info
+            vma_my_info *call_task_vma_my_info;
+            call_task_vma_my_info = kmalloc(sizeof(vma_my_info), GFP_ATOMIC);
+            if(call_task_vma_my_info == NULL){
+                sprintf(respbuf, "Failed, ENOSPC");
+                printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
+                preempt_enable(); 
+                return -ENOSPC;
+            }
+            INIT_LIST_HEAD( &call_task_vma_my_info->myvmalist);
+            //init the struct
+            call_task_vma_my_info->my_vm_ops = kmalloc(sizeof(struct vm_operations_struct), GFP_ATOMIC);
+            if(call_task_vma_my_info->my_vm_ops == NULL){
+                sprintf(respbuf, "Failed, ENOSPC");
+                printk(KERN_DEBUG "vmlogger: Exit on my_vm_ops == %p\n", my_vm_ops);
+                preempt_enable(); 
+                return -ENOSPC;
+            }
+            call_task_vma_my_info->mm = call_task->mm;
+            call_task_vma_my_info->call_task = call_task;
+            call_task_vma_my_info->vma = vma;
+            if(vma->vm_ops != NULL){
+                memcpy(call_task_vma_my_info->my_vm_ops ,&vma->vm_ops, sizeof(struct vm_operations_struct) );
+                call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
+                call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
+                vma->vm_ops = call_task_vma_my_info->my_vm_ops;
+                list_add ( &(call_task_vma_my_info->myvmalist) , &vmalist);
+            }
         }
         //Now we can add it to the list
-        list_add ( &(call_task_vma_my_info->myvmalist) , &vmalist);
         vma = vma->vm_next;
     }
 
