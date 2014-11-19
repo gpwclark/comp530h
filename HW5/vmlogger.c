@@ -31,7 +31,7 @@ typedef struct __vma_my_info{
 } vma_my_info;
 
 vma_my_info *vmalist[MAX_VMA_LIST];
-unsigned int vmalist_index = 0;
+int vmalist_index = 0;
 
 struct task_struct *call_task = NULL;
 char respbuf[MAX_RESP];
@@ -44,8 +44,8 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     int (* old_fault) (struct vm_area_struct *vma, struct vm_fault *vmf) = NULL;
     int rval = -1;
     vma_my_info *this_vma;
-    unsigned int index = 0;
-    while(true){
+    int index = 0;
+    while(this_vma == NULL && index < MAX_VMA_LIST){
         this_vma = vmalist[index];
         //if(this_vma != NULL && this_vma->vma == vma){
         //    printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
@@ -71,8 +71,6 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
             printk(KERN_DEBUG "vmlogger: breaking loop");
 	    }
         index++;
-        if(this_vma == NULL || index == (MAX_VMA_LIST -1))
-            break;
     }
     if(old_fault != NULL){
         rval =  old_fault(vma, vmf);
@@ -139,7 +137,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 
     while(vma && vmalist_index < MAX_VMA_LIST){
         
-        if(vma->vm_ops->fault != NULL){
+        if(vma->vm_ops != NULL && vma->vm_ops->fault != NULL){
             //Save some of our mm info
             vma_my_info *call_task_vma_my_info;
             call_task_vma_my_info = kmalloc(sizeof(vma_my_info), GFP_ATOMIC);
@@ -160,14 +158,13 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
             call_task_vma_my_info->mm = call_task->mm;
             call_task_vma_my_info->call_task = call_task;
             call_task_vma_my_info->vma = vma;
-            if(vma->vm_ops != NULL){
-                memcpy(call_task_vma_my_info->my_vm_ops ,&vma->vm_ops, sizeof(struct vm_operations_struct) );
-                call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
-                call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
-                vma->vm_ops = call_task_vma_my_info->my_vm_ops;
-                vmalist[vmalist_index] = call_task_vma_my_info;//keep track of pointer to these structs in an array
-                vmalist_index++;
-            }
+            //memcpy the struct
+            memcpy(call_task_vma_my_info->my_vm_ops ,&vma->vm_ops, sizeof(struct vm_operations_struct) );
+            call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
+            call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
+            vma->vm_ops = call_task_vma_my_info->my_vm_ops;
+            vmalist[vmalist_index] = call_task_vma_my_info;//keep track of pointer to these structs in an array
+            vmalist_index++;
         }
         //Now we can add it to the list
         break;//do one
