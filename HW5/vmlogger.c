@@ -20,15 +20,18 @@
  * while the variable is non-NULL is rejected).
  */
 
-LIST_HEAD(vmalist);
+#define MAX_VMA_LIST 100000;
+
 typedef struct __vma_my_info{
-    struct list_head myvmalist;
     struct vm_area_struct *vma;
     struct task_struct *call_task;
     struct mm_struct *mm;
     struct vm_operations_struct *my_vm_ops;
     int (* old_fault)(struct vm_area_struct *vma, struct vm_fault *vmf); // function pointer to a fault handler -- to use in wrapper function
 } vma_my_info;
+
+vma_my_info *vmalist[MAX_VMA_LIST];
+unsigned int vmalist_index = 0;
 
 struct task_struct *call_task = NULL;
 char respbuf[MAX_RESP];
@@ -41,7 +44,9 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     int (* old_fault) (struct vm_area_struct *vma, struct vm_fault *vmf) = NULL;
     int rval = -1;
     vma_my_info *this_vma;
-    list_for_each_entry(this_vma, &vmalist, myvmalist){
+    unsigned int index = 0;
+    while(true){
+        this_vma = vmalist[index];
         //if(this_vma != NULL && this_vma->vma == vma){
         //    printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
         //    printk(KERN_DEBUG "vmlogger: DEBUG vma %p vmf %p\n", vma, vmf);
@@ -63,7 +68,12 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
                 ){//we have found the vma
 		    //execute the original function
 		    old_fault = this_vma->old_fault;
+            break;
+            printk(KERN_DEBUG "vmlogger: breaking loop");
 	    }
+        index++;
+        if(this_vma == NULL || index == (MAX_VMA_LIST -1))
+            break;
     }
     if(old_fault != NULL){
         rval =  old_fault(vma, vmf);
@@ -71,9 +81,6 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     }
 
     return rval;
-    printk(KERN_DEBUG "vmlogger: called my_fault return %d", rval);
-    return rval;
-
 }
 /* This function emulates the handling of a system call by
  * accessing the call string from the user program, executing
@@ -131,7 +138,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
     struct vm_area_struct *vma;
     vma = call_task->mm->mmap;
 
-    while(vma){
+    while(vma && vmalist_index < MAX_VMA_LIST){
         
         if(vma->vm_ops->fault != NULL){
             //Save some of our mm info
@@ -143,7 +150,6 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
                 preempt_enable(); 
                 return -ENOSPC;
             }
-            INIT_LIST_HEAD( &call_task_vma_my_info->myvmalist);
             //init the struct
             call_task_vma_my_info->my_vm_ops = kmalloc(sizeof(struct vm_operations_struct), GFP_ATOMIC);
             if(call_task_vma_my_info->my_vm_ops == NULL){
@@ -160,12 +166,12 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
                 call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
                 call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
                 vma->vm_ops = call_task_vma_my_info->my_vm_ops;
-                list_add ( &(call_task_vma_my_info->myvmalist) , &vmalist);
+                vmalist[vmalist_index] = call_task_vma_my_info;//keep track of pointer to these structs in an array
+                vmalist_index++;
             }
         }
         //Now we can add it to the list
-        //vma = vma->vm_next;
-        break;
+        vma = vma->vm_next;
     }
 
 	/* Here the response has been generated and is ready for the user
@@ -268,8 +274,10 @@ static void __exit vmlogger_module_exit(void)
 	debugfs_remove(file);
 	debugfs_remove(dir);
 
-    vma_my_info *this_vma = NULL;
-    list_for_each_entry(this_vma, &vmalist, myvmalist){
+    vma_my_info *this_vma;
+    unsigned int index = 0;
+    while(true){
+        this_vma = vmalist[index];
         if(this_vma != NULL){//we have found the vma
             
             printk(KERN_DEBUG "vmlogger: freeing vma_info %p\n", this_vma);
@@ -290,7 +298,10 @@ static void __exit vmlogger_module_exit(void)
         else{
             printk(KERN_DEBUG "vmlogger: this_vma = NULL\n");
         }
-
+        //breakpoint
+        index++;
+        if(this_vma == NULL || index == (MAX_VMA_LIST -1))
+            break;
     }
 }
 
