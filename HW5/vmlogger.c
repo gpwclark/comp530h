@@ -170,6 +170,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
             }
         }
         //Now we can add it to the list
+        break;//do one
         vma = vma->vm_next;
     }
 
