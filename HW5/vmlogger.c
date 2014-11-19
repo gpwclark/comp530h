@@ -20,7 +20,7 @@
  * while the variable is non-NULL is rejected).
  */
 
-#define MAX_VMA_LIST 100000;
+#define MAX_VMA_LIST 100000
 
 typedef struct __vma_my_info{
     struct vm_area_struct *vma;
