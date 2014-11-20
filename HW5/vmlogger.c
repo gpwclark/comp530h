@@ -47,23 +47,19 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
 
     while(this_vma != NULL && index < MAX_VMA_LIST){
         this_vma = vmalist[index];
-        //if(this_vma != NULL && this_vma->vma == vma){
-        //    printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
-        //    printk(KERN_DEBUG "vmlogger: DEBUG vma %p vmf %p\n", vma, vmf);
-        //    printk(KERN_DEBUG "    vmlogger: this_vma->vma %p vma %p\n", this_vma->vma, vma);
-        //    printk(KERN_DEBUG "    vmlogger: this_vma->call_task %p\n", this_vma->call_task);
-        //    printk(KERN_DEBUG "    vmlogger: this_vma->mm %p\n", this_vma->mm);
-        //    printk(KERN_DEBUG "    vmlogger: this_vma->my_vm_ops %p\n", this_vma->my_vm_ops);
-        //    printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
-        //}
-        //else
-        //    printk(KERN_DEBUG "vmlogger: this_vma is %p\n",this_vma);
+        }
 	    if(vma == this_vma->vma 
                 && this_vma->old_fault != NULL
                 ){//we have found the vma
 		    //execute the original function
 		    rval = this_vma->old_fault(vma, vmf);
-            printk(KERN_DEBUG "vmlogger: breaking loop");
+            printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
+            printk(KERN_DEBUG "vmlogger: DEBUG vma %p vmf %p\n", vma, vmf);
+            printk(KERN_DEBUG "    vmlogger: this_vma->vma %p vma %p\n", this_vma->vma, vma);
+            printk(KERN_DEBUG "    vmlogger: this_vma->call_task %p\n", this_vma->call_task);
+            printk(KERN_DEBUG "    vmlogger: this_vma->mm %p\n", this_vma->mm);
+            printk(KERN_DEBUG "    vmlogger: this_vma->my_vm_ops %p\n", this_vma->my_vm_ops);
+            printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
             break;
 	    }
         index++;
@@ -157,7 +153,7 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
             vmalist_index++;
         }
         //Now we can add it to the list
-        break;//do one
+        //break;//do one
         vma = vma->vm_next;
     }
 
