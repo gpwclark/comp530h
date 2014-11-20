@@ -59,22 +59,15 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
         //}
         //else
         //    printk(KERN_DEBUG "vmlogger: this_vma is %p\n",this_vma);
-	    if(vma != NULL
-                && this_vma->vma != NULL 
-                && vma == this_vma->vma 
+	    if(vma == this_vma->vma 
                 && this_vma->old_fault != NULL
-                && this_vma->my_vm_ops != NULL
                 ){//we have found the vma
 		    //execute the original function
-		    old_fault = this_vma->old_fault;
-            break;
+		    rval = this_vma->old_fault(vma, vmf);
             printk(KERN_DEBUG "vmlogger: breaking loop");
+            break;
 	    }
         index++;
-    }
-    if(old_fault != NULL){
-        rval =  old_fault(vma, vmf);
-        printk(KERN_DEBUG "vmlogger: called orig fault function: return %d", rval);
     }
 
     return rval;
