@@ -44,7 +44,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     int (* old_fault) (struct vm_area_struct *vma, struct vm_fault *vmf) = NULL;
     int rval = -1;
     int index = 0;
-    vma_my_info *this_vma = vmalist[index];
+    vma_my_info *this_vma = vmalist[index];//start at 0
 
     while(this_vma != NULL && index < MAX_VMA_LIST){
         this_vma = vmalist[index];
@@ -60,7 +60,6 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
         //else
         //    printk(KERN_DEBUG "vmlogger: this_vma is %p\n",this_vma);
 	    if(vma != NULL
-                && vmf != NULL 
                 && this_vma->vma != NULL 
                 && vma == this_vma->vma 
                 && this_vma->old_fault != NULL
