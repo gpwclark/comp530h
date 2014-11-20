@@ -41,7 +41,6 @@ struct dentry *dir, *file;
 struct vm_operations_struct *my_vm_ops = NULL;
 
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
-    int (* old_fault) (struct vm_area_struct *vma, struct vm_fault *vmf) = NULL;
     int rval = -1;
     int index = 0;
     vma_my_info *this_vma = vmalist[index];//start at 0
