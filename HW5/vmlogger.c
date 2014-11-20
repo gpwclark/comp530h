@@ -122,8 +122,6 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
 		return count;  /* write() calls return the number of bytes written */
 	}
 
-	sprintf(respbuf, "0");
-
     struct vm_area_struct *vma;
     vma = call_task->mm->mmap;
 
@@ -147,11 +145,11 @@ static ssize_t vmlogger_call(struct file *file, const char __user *buf,
                 preempt_enable(); 
                 return -ENOSPC;
             }
+            //memcpy the struct
+            memcpy(call_task_vma_my_info->my_vm_ops , vma->vm_ops, sizeof(struct vm_operations_struct) );
             call_task_vma_my_info->mm = call_task->mm;
             call_task_vma_my_info->call_task = call_task;
             call_task_vma_my_info->vma = vma;
-            //memcpy the struct
-            memcpy(call_task_vma_my_info->my_vm_ops ,&vma->vm_ops, sizeof(struct vm_operations_struct) );
             call_task_vma_my_info->old_fault = vma->vm_ops->fault; //make pointer to orig function so we can call it later
             call_task_vma_my_info->my_vm_ops->fault = my_fault; //set custom struct pointer (for the fault function) to our custom function)
             vma->vm_ops = call_task_vma_my_info->my_vm_ops;
