@@ -47,7 +47,6 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
 
     while(this_vma != NULL && index < MAX_VMA_LIST){
         this_vma = vmalist[index];
-        }
 	    if(vma == this_vma->vma && this_vma->old_fault != NULL){//we have found the vma
 		    //execute the original function
 		    rval = this_vma->old_fault(vma, vmf);
