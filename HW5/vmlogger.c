@@ -41,6 +41,8 @@ struct dentry *dir, *file;
 struct vm_operations_struct *my_vm_ops = NULL;
 
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
+    ktime_t start_time;
+    ktime_t end_time;
     int rval = -1;
     int index = 0;
     vma_my_info *this_vma = vmalist[index];//start at 0
@@ -49,9 +51,11 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
         this_vma = vmalist[index];
 	    if(vma == this_vma->vma && this_vma->old_fault != NULL){//we have found the vma
 		    //execute the original function
+            start_time = ktime_get();
 		    rval = this_vma->old_fault(vma, vmf);
+            end_time = ktime_get();
             printk(KERN_DEBUG "vmlogger: NEW FAULT vma_info %p\n", this_vma);
-            printk(KERN_DEBUG "vmlogger: PAGE %lu\n", ((unsigned long)(vmf->virtual_address)) >> 12);
+            printk(KERN_DEBUG "vmlogger: MM %p PAGE %lu PAGE_OFFSET %d TIME %llu\n", this_vma->mm, ((unsigned long)(vmf->virtual_address)) >> 12, vmf->pgoff, ktime_to_ns(ktime_sub(end_time, start_time)) );
             break;
 	    }
         index++;
