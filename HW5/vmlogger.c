@@ -50,13 +50,8 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
 	    if(vma == this_vma->vma && this_vma->old_fault != NULL){//we have found the vma
 		    //execute the original function
 		    rval = this_vma->old_fault(vma, vmf);
-            printk(KERN_DEBUG "vmlogger: DEBUG vma_info %p\n", this_vma);
-            printk(KERN_DEBUG "vmlogger: DEBUG vma %p vmf %p\n", vma, vmf);
-            printk(KERN_DEBUG "    vmlogger: this_vma->vma %p vma %p\n", this_vma->vma, vma);
-            printk(KERN_DEBUG "    vmlogger: this_vma->call_task %p\n", this_vma->call_task);
-            printk(KERN_DEBUG "    vmlogger: this_vma->mm %p\n", this_vma->mm);
-            printk(KERN_DEBUG "    vmlogger: this_vma->my_vm_ops %p\n", this_vma->my_vm_ops);
-            printk(KERN_DEBUG "    vmlogger: this_vma->old_fault %p\n", this_vma->old_fault);
+            printk(KERN_DEBUG "vmlogger: NEW FAULT vma_info %p\n", this_vma);
+            printk(KERN_DEBUG "vmlogger: PAGE %lu\n", ((unsigned long)(vmf->virtual_address)) >> 12);
             break;
 	    }
         index++;
