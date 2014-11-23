@@ -47,7 +47,7 @@ void main (int argc, char* argv[])
 
 
   /* open the input file */
-  if ((fdin = open ("BigFile", O_RDONLY)) < 0)
+  if ((fdin = open (argv[1], O_RDONLY)) < 0)
       errx (-1, "can't open input for reading");
   /* find size of input file */
   if (fstat (fdin,&statbuf) < 0)

@@ -6,7 +6,9 @@ M=$(PWD)
 all:
 	make -C /lib/modules/$(K)/build M=$(M) modules
 	gcc caller.c -o caller
-	dd if=/dev/urandom of=BigFile  bs=1M  count=5
+	dd if=/dev/urandom of=BigFileRandom  bs=1M  count=50
+	dd if=/dev/urandom of=BigFileSequential  bs=1M  count=50
+	dd if=/dev/urandom of=BigFileStride  bs=1M  count=50
 
 inst:
 	make -C /lib/modules/$(K)/build M=$(M) modules_install
@@ -14,4 +16,4 @@ inst:
 clean:
 	make -C /lib/modules/$(K)/build M=$(M) clean
 	rm caller
-	rm BigFile
+	rm BigFile*
