@@ -59,13 +59,13 @@ void main (int argc, char* argv[])
   do_syscall("vmlogger_new");
   fprintf(stdout, "Module vmlogger returns %s", resp_buf);
 
-  if(strncmp(argv[1] , "BigFileRandom", sizeof("BigFileRandom") == 0){
+  if(strncmp(argv[1] , "BigFileRandom", sizeof("BigFileRandom")) == 0){
           do_mmap_stuff_rand();
   }
-  else if(strncmp(argv[1] , "BigFileSequential", sizeof("BigFileSequential") == 0){
+  else if(strncmp(argv[1] , "BigFileSequential", sizeof("BigFileSequential")) == 0){
           do_mmap_stuff_seq();
   }
-  else if(strncmp(argv[1] , "BigFileStride", sizeof("BigFileStride") == 0){
+  else if(strncmp(argv[1] , "BigFileStride", sizeof("BigFileStride")) == 0){
           do_mmap_stuff_stride();
   }
   //else do nothing
