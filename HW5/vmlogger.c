@@ -45,17 +45,19 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     ktime_t end_time;
     int rval = -1;
     int index = 0;
+    unsigned long page = 0;
     vma_my_info *this_vma = vmalist[index];//start at 0
 
     while(this_vma != NULL && index < MAX_VMA_LIST){
         this_vma = vmalist[index];
 	    if(vma == this_vma->vma && this_vma->old_fault != NULL){//we have found the vma
 		    //execute the original function
+            page = ((unsigned long)(vmf->virtual_address)) >> 12;
             start_time = ktime_get();
-		    rval = this_vma->old_fault(vma, vmf);
+		    rval = this_vma->old_fault(vma, vmf); //CALL THE OLD FUNCTION HERE 
             end_time = ktime_get();
-            printk(KERN_DEBUG "vmlogger: NEW FAULT vma_info %p\n", this_vma);
-            printk(KERN_DEBUG "vmlogger: MM %p PAGE %lu PAGE_OFFSET %lu TIME %llu\n", this_vma->mm, ((unsigned long)(vmf->virtual_address)) >> 12, vmf->pgoff, ktime_to_ns(ktime_sub(end_time, start_time)) );
+            //printk(KERN_DEBUG "vmlogger: NEW FAULT vma_info %p\n", this_vma); //KEEP THIS FOR DEGUGGING
+            printk(KERN_DEBUG "vmlogger: MM %p PAGE %lu PAGE_OFFSET %lu PFN %lu TIME %llu\n", this_vma->mm, page, vmf->pgoff, page_to_pfn(page), ktime_to_ns(ktime_sub(end_time, start_time)) );
             break;
 	    }
         index++;
