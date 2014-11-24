@@ -58,8 +58,18 @@ void main (int argc, char* argv[])
 
   do_syscall("vmlogger_new");
   fprintf(stdout, "Module vmlogger returns %s", resp_buf);
-  do_mmap_stuff();
 
+  if(strncmp(a[1] , "BigFileRandom", sizeof("BigFileRandom") == 0){
+          do_mmap_stuff_rand();
+  }
+  else if(strncmp(a[1] , "BigFileSequential", sizeof("BigFileSequential") == 0){
+          do_mmap_stuff_seq();
+  }
+  else if(strncmp(a[1] , "BigFileStride", sizeof("BigFileStride") == 0){
+          do_mmap_stuff_stride();
+  }
+  //else do nothing
+  //
   close (fp);
 } /* end main() */
 
@@ -84,9 +94,29 @@ void do_syscall(char *call_string)
   }
 }
 
-void do_mmap_stuff(){
+void do_mmap_stuff_seq(){
     /* read at random from mapped file, compute a “checksum” */
-    fprintf(stdout, "Reading %d bytes from mapped file\n", statbuf.st_size);
+    fprintf(stdout, "Reading %d bytes from mapped file in sequence\n", statbuf.st_size);
+    max_idx = statbuf.st_size - 2;
+    for (i = 0; i < statbuf.st_size; i++){
+        j = i;
+        c += (*(src+j)) >> 2;
+    }
+    fprintf(stdout, "Read %d bytes, sum %lu\n", i-1, c); 
+}
+void do_mmap_stuff_stride(){
+    /* read at random from mapped file, compute a “checksum” */
+    fprintf(stdout, "Reading %d bytes from mapped file with a hefty stride\n", statbuf.st_size);
+    max_idx = statbuf.st_size - 2;
+    for (i = 0; i < statbuf.st_size; i++){
+        j = (i * STRIDE) % max_idx;
+        c += (*(src+j)) >> 2;
+    }
+    fprintf(stdout, "Read %d bytes, sum %lu\n", i-1, c); 
+}
+void do_mmap_stuff_rand(){
+    /* read at random from mapped file, compute a “checksum” */
+    fprintf(stdout, "Reading %d bytes from mapped file absolutely randomly\n", statbuf.st_size);
     max_idx = statbuf.st_size - 2;
     for (i = 0; i < statbuf.st_size; i++){
         j = random() % max_idx;
