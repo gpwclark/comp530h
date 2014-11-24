@@ -24,7 +24,9 @@ int i, j;
 int max_idx;
 
 void do_syscall(char *call_string);
-void do_mmap_stuff();
+void do_mmap_stuff_rand();
+void do_mmap_stuff_seq();
+void do_mmap_stuff_stride();
 
 void main (int argc, char* argv[])
 {
