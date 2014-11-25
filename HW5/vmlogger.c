@@ -43,13 +43,13 @@ struct vm_operations_struct *my_vm_ops = NULL;
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
     ktime_t start_time;
     ktime_t end_time;
-    int rval = 512;
+    int rval = 1000;
     int index = 0;
     unsigned long page = 0;
     vma_my_info *this_vma = vmalist[index];//start at 0
 
     while(this_vma != NULL && index < MAX_VMA_LIST){
-	    if(vma != NULL && vmf != NULL && vmf->page != NULL && vmf->virtual_address != NULL && this_vma->mm != NULL && this_vma->old_fault != NULL && vma == this_vma->vma){//we have found the vma
+	    if(vma != NULL && vmf != NULL && vmf->page != NULL && vmf->pgoff != NULL && vmf->virtual_address != NULL && this_vma->mm != NULL && this_vma->old_fault != NULL && vma == this_vma->vma){//we have found the vma
 		    //execute the original function
             page = (vmf->virtual_address != NULL) ? (((unsigned long)(vmf->virtual_address)) >> 12) : 0;
             start_time = ktime_get();
