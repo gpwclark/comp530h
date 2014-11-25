@@ -43,7 +43,7 @@ struct vm_operations_struct *my_vm_ops = NULL;
 static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom fault handler function
     ktime_t start_time;
     ktime_t end_time;
-    int rval = 0;
+    int rval = 512;
     int index = 0;
     unsigned long page = 0;
     vma_my_info *this_vma = vmalist[index];//start at 0
