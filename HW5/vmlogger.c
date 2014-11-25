@@ -49,7 +49,6 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
     vma_my_info *this_vma = vmalist[index];//start at 0
 
     while(this_vma != NULL && index < MAX_VMA_LIST){
-        this_vma = vmalist[index];
 	    if(vma == this_vma->vma && this_vma->old_fault != NULL){//we have found the vma
 		    //execute the original function
             page = ((unsigned long)(vmf->virtual_address)) >> 12;
@@ -61,6 +60,7 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
             break;
 	    }
         index++;
+        this_vma = vmalist[index];
     }
 
     return rval;
