@@ -56,8 +56,8 @@ static int my_fault(struct vm_area_struct *vma, struct vm_fault *vmf){//custom f
 		    rval = this_vma->old_fault(vma, vmf); //CALL THE OLD FUNCTION HERE 
             end_time = ktime_get();
             //printk(KERN_DEBUG "vmlogger: NEW FAULT vma_info %p\n", this_vma); //KEEP THIS FOR DEGUGGING
-            //page_to_pfn(vmf->page)
-            printk(KERN_DEBUG "vmlogger: MM %p PAGE %lu PAGE_OFFSET %lu PFN %lu TIME %llu\n", this_vma->mm, page, vmf->pgoff, 0, ktime_to_ns(ktime_sub(end_time, start_time)) );
+            unsigned long pfn = (vmf->page == NULL) ? (unsigned long) 0 : page_to_pfn(vmf->page);
+            printk(KERN_DEBUG "vmlogger: MM %p PAGE %lu PAGE_OFFSET %lu PFN %lu TIME %llu\n", this_vma->mm, page, vmf->pgoff, pfn, ktime_to_ns(ktime_sub(end_time, start_time)) );
             break;
 	    }
         index++;
