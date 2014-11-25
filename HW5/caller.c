@@ -110,8 +110,8 @@ void do_mmap_stuff_stride(){
     /* read at random from mapped file, compute a “checksum” */
     fprintf(stdout, "Reading %d bytes from mapped file with a hefty stride\n", statbuf.st_size);
     max_idx = statbuf.st_size - 2;
-    for (i = 0; i < statbuf.st_size; i++){
-        j = (i * STRIDE) % max_idx;
+    for (i = 0; i < statbuf.st_size; i+=STRIDE){
+        j = i;
         c += (*(src+j)) >> 2;
     }
     fprintf(stdout, "Read %d bytes, sum %lu\n", i-1, c); 
